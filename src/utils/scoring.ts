@@ -33,8 +33,6 @@ export function isGameWon(gameScore: GameScore, config: MatchConfig): boolean {
 
 // Add a point to a game
 export function addPointToGame(gameScore: GameScore, scoringPlayer: Player, config: MatchConfig): GameScore {
-  const { player1Points, player2Points, server } = gameScore;
-  
   if (config.scoringSystem === 'no-ad') {
     return addPointNoAd(gameScore, scoringPlayer);
   } else {
@@ -83,7 +81,7 @@ function addPointAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
 
 // Add point with no-ad scoring
 function addPointNoAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
-  const { player1Points, player2Points, server } = gameScore;
+  const { player1Points, player2Points } = gameScore;
   
   if (scoringPlayer === 'player1') {
     if (player1Points === 0) return { ...gameScore, player1Points: 15 };
