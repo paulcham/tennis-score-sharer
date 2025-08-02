@@ -55,7 +55,8 @@ function addPointAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
       } else if (player2Points === 'advantage') {
         return { ...gameScore, player1Points: 'deuce', player2Points: 'deuce' };
       } else {
-        return { ...gameScore, player1Points: 'deuce', player2Points: 'deuce' };
+        // Player 1 wins the game (opponent not at 40)
+        return gameScore; // Keep current score, game will be detected as won
       }
     }
     if (player1Points === 'deuce') return { ...gameScore, player1Points: 'advantage' };
@@ -70,7 +71,8 @@ function addPointAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
       } else if (player1Points === 'advantage') {
         return { ...gameScore, player2Points: 'deuce', player1Points: 'deuce' };
       } else {
-        return { ...gameScore, player2Points: 'deuce', player1Points: 'deuce' };
+        // Player 2 wins the game (opponent not at 40)
+        return gameScore; // Keep current score, game will be detected as won
       }
     }
     if (player2Points === 'deuce') return { ...gameScore, player2Points: 'advantage' };

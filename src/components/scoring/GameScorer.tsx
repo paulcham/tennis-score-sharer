@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { GameScore, MatchConfig, Player } from '../../types/Scoring';
-import { addPointToGame, isGameWon } from '../../utils/scoring';
+import { addPointToGame } from '../../utils/scoring';
 
 interface GameScorerProps {
   config: MatchConfig;
