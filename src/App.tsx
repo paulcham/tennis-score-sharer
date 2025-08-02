@@ -1,8 +1,8 @@
 import React from 'react';
-import Home from './pages/Home';
+import TestScoring from './pages/TestScoring';
 
 function App() {
-  return <Home />;
+  return <TestScoring />;
 }
 
 export default App;

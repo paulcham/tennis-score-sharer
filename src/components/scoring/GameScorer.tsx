@@ -1,0 +1,124 @@
+import React, { useState } from 'react';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { GameScore, MatchConfig, Player } from '../../types/Scoring';
+import { addPointToGame, isGameWon } from '../../utils/scoring';
+
+interface GameScorerProps {
+  config: MatchConfig;
+}
+
+const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
+  const [gameScore, setGameScore] = useState<GameScore>({
+    player1Points: 0,
+    player2Points: 0,
+    server: 'player1'
+  });
+
+  const [gameHistory, setGameHistory] = useState<GameScore[]>([]);
+
+  const handlePoint = (scoringPlayer: Player) => {
+    const newGameScore = addPointToGame(gameScore, scoringPlayer, config);
+    setGameScore(newGameScore);
+    
+    // Check if game is won
+    if (isGameWon(newGameScore, config)) {
+      setGameHistory([...gameHistory, newGameScore]);
+      // Reset for next game
+      setGameScore({
+        player1Points: 0,
+        player2Points: 0,
+        server: newGameScore.server === 'player1' ? 'player2' : 'player1'
+      });
+    }
+  };
+
+  const formatPoint = (point: number | string): string => {
+    if (point === 0) return '0';
+    if (point === 15) return '15';
+    if (point === 30) return '30';
+    if (point === 40) return '40';
+    if (point === 'deuce') return 'Deuce';
+    if (point === 'advantage') return 'Ad';
+    return String(point);
+  };
+
+  const getPointColor = (point: number | string): string => {
+    if (point === 'advantage') return 'text-green-600 font-bold';
+    if (point === 'deuce') return 'text-blue-600 font-bold';
+    return '';
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Current Game</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <h3 className="font-semibold mb-2">{config.player1Name}</h3>
+              <div className={`text-2xl font-bold ${getPointColor(gameScore.player1Points)}`}>
+                {formatPoint(gameScore.player1Points)}
+              </div>
+              <Button 
+                onClick={() => handlePoint('player1')}
+                className="mt-2 w-full"
+                disabled={isGameWon(gameScore, config)}
+              >
+                Point
+              </Button>
+            </div>
+            <div className="text-center">
+              <h3 className="font-semibold mb-2">{config.player2Name}</h3>
+              <div className={`text-2xl font-bold ${getPointColor(gameScore.player2Points)}`}>
+                {formatPoint(gameScore.player2Points)}
+              </div>
+              <Button 
+                onClick={() => handlePoint('player2')}
+                className="mt-2 w-full"
+                disabled={isGameWon(gameScore, config)}
+              >
+                Point
+              </Button>
+            </div>
+          </div>
+          
+          <div className="mt-4 text-center">
+            <p className="text-sm text-muted-foreground">
+              Server: {gameScore.server === 'player1' ? config.player1Name : config.player2Name}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Scoring: {config.scoringSystem === 'ad' ? 'Ad' : 'No-Ad'}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {gameHistory.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Game History</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {gameHistory.map((game, index) => (
+                <div key={index} className="flex justify-between items-center p-2 bg-muted rounded">
+                  <span className="text-sm">
+                    Game {index + 1}: {formatPoint(game.player1Points)} - {formatPoint(game.player2Points)}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {game.server === 'player1' ? config.player1Name : config.player2Name} served
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+};
+
+export default GameScorer; 
