@@ -21,13 +21,14 @@ export function isGameWon(gameScore: GameScore, config: MatchConfig): boolean {
     if (player1Points === 'deuce' && player2Points === 'deuce') {
       return false; // Game continues
     }
-    return player1Points === 40 || player2Points === 40;
+    // In no-ad, reaching 40 and winning the next point wins the game
+    return false; // Game is never automatically won, needs next point
   } else {
     // Ad scoring: need advantage and then win
     if (player1Points === 'advantage' || player2Points === 'advantage') {
       return true; // Next point wins
     }
-    return false;
+    return false; // Game continues
   }
 }
 

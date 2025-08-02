@@ -21,8 +21,9 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     const newGameScore = addPointToGame(gameScore, scoringPlayer, config);
     setGameScore(newGameScore);
     
-    // Check if game is won
-    if (isGameWon(newGameScore, config)) {
+    // Check if this point won the game
+    const gameWon = checkIfGameWon(newGameScore, scoringPlayer, config);
+    if (gameWon) {
       setGameHistory([...gameHistory, newGameScore]);
       // Reset for next game
       setGameScore({
@@ -30,6 +31,27 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         player2Points: 0,
         server: newGameScore.server === 'player1' ? 'player2' : 'player1'
       });
+    }
+  };
+
+  // Check if the game was won by the scoring player
+  const checkIfGameWon = (gameScore: GameScore, scoringPlayer: Player, config: MatchConfig): boolean => {
+    const { player1Points, player2Points } = gameScore;
+    
+    if (config.scoringSystem === 'no-ad') {
+      // No-ad: if scoring player reaches 40 and opponent is not at 40, game is won
+      if (scoringPlayer === 'player1') {
+        return player1Points === 40 && player2Points !== 40;
+      } else {
+        return player2Points === 40 && player1Points !== 40;
+      }
+    } else {
+      // Ad scoring: if scoring player has advantage, game is won
+      if (scoringPlayer === 'player1') {
+        return player1Points === 'advantage';
+      } else {
+        return player2Points === 'advantage';
+      }
     }
   };
 
@@ -65,7 +87,6 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
               <Button 
                 onClick={() => handlePoint('player1')}
                 className="mt-2 w-full"
-                disabled={isGameWon(gameScore, config)}
               >
                 Point
               </Button>
@@ -78,7 +99,6 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
               <Button 
                 onClick={() => handlePoint('player2')}
                 className="mt-2 w-full"
-                disabled={isGameWon(gameScore, config)}
               >
                 Point
               </Button>
