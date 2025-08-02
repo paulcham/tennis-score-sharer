@@ -46,11 +46,11 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         return player2Points === 40 && player1Points !== 40;
       }
     } else {
-      // Ad scoring: if scoring player has advantage, game is won
+      // Ad scoring: if scoring player has advantage or game, game is won
       if (scoringPlayer === 'player1') {
-        return player1Points === 'advantage';
+        return player1Points === 'advantage' || player1Points === 'game';
       } else {
-        return player2Points === 'advantage';
+        return player2Points === 'advantage' || player2Points === 'game';
       }
     }
   };
@@ -62,12 +62,14 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     if (point === 40) return '40';
     if (point === 'deuce') return 'Deuce';
     if (point === 'advantage') return 'Ad';
+    if (point === 'game') return 'Game!';
     return String(point);
   };
 
   const getPointColor = (point: number | string): string => {
     if (point === 'advantage') return 'text-green-600 font-bold';
     if (point === 'deuce') return 'text-blue-600 font-bold';
+    if (point === 'game') return 'text-green-700 font-bold text-lg';
     return '';
   };
 
