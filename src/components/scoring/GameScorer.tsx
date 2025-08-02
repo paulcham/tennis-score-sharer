@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { GameScore, MatchConfig, Player } from '../../types/Scoring';
+import { GameScore, MatchConfig, Player, SetScore } from '../../types/Scoring';
 import { addPointToGame } from '../../utils/scoring';
+import Scoreboard from './Scoreboard';
 
 interface GameScorerProps {
   config: MatchConfig;
@@ -15,6 +16,11 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     server: 'player1'
   });
 
+  const [sets, setSets] = useState<SetScore[]>([
+    { player1Games: 0, player2Games: 0, isComplete: false }
+  ]);
+
+  const [currentSet, setCurrentSet] = useState(1);
   const [gameHistory, setGameHistory] = useState<GameScore[]>([]);
 
   const handlePoint = (scoringPlayer: Player) => {
@@ -25,6 +31,22 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     const gameWon = checkIfGameWon(newGameScore, scoringPlayer, config);
     if (gameWon) {
       setGameHistory([...gameHistory, newGameScore]);
+      
+      // Update set scores
+      const currentSetIndex = currentSet - 1;
+      const updatedSets = [...sets];
+      if (!updatedSets[currentSetIndex]) {
+        updatedSets[currentSetIndex] = { player1Games: 0, player2Games: 0, isComplete: false };
+      }
+      
+      if (scoringPlayer === 'player1') {
+        updatedSets[currentSetIndex].player1Games += 1;
+      } else {
+        updatedSets[currentSetIndex].player2Games += 1;
+      }
+      
+      setSets(updatedSets);
+      
       // Reset for next game
       setGameScore({
         player1Points: 0,
@@ -75,9 +97,18 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
 
   return (
     <div className="space-y-6">
+      {/* Scoreboard */}
+      <Scoreboard 
+        config={config}
+        currentGameScore={gameScore}
+        sets={sets}
+        currentSet={currentSet}
+      />
+
+      {/* Scoring Controls */}
       <Card>
         <CardHeader>
-          <CardTitle>Current Game</CardTitle>
+          <CardTitle>Scoring Controls</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-4">
