@@ -42,7 +42,7 @@ export function addPointToGame(gameScore: GameScore, scoringPlayer: Player, conf
 
 // Add point with ad scoring
 function addPointAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
-  const { player1Points, player2Points, server } = gameScore;
+  const { player1Points, player2Points } = gameScore;
   
   if (scoringPlayer === 'player1') {
     if (player1Points === 0) return { ...gameScore, player1Points: 15 };
