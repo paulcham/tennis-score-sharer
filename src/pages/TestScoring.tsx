@@ -7,11 +7,11 @@ import { MatchConfig } from '../types/Scoring';
 const TestScoring: React.FC = () => {
   const [config, setConfig] = useState<MatchConfig>({
     scoringSystem: 'ad',
-    matchFormat: 'single',
+    matchFormat: 'best-of-3',
     setDuration: 6,
-    tieBreakRules: '7-point',
-    player1Name: 'Player 1',
-    player2Name: 'Player 2'
+    tieBreakRules: '10-point',
+    player1Name: 'Nicky',
+    player2Name: 'Opponent'
   });
 
   const [showScorer, setShowScorer] = useState(false);

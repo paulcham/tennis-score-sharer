@@ -16,6 +16,10 @@ export interface SetScore {
   player2Games: number;
   isComplete: boolean;
   winner?: Player;
+  tieBreakScore?: {
+    player1Points: number;
+    player2Points: number;
+  };
 }
 
 export interface TieBreakScore {
@@ -23,6 +27,7 @@ export interface TieBreakScore {
   player2Points: number;
   isComplete: boolean;
   winner?: Player;
+  server: Player;
 }
 
 export interface MatchConfig {

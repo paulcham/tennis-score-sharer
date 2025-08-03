@@ -133,6 +133,109 @@ function addPointNoAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
   return gameScore;
 }
 
+// Remove a point from a game (for correcting mistakes)
+export function removePointFromGame(gameScore: GameScore, scoringPlayer: Player, config: MatchConfig): GameScore {
+  if (config.scoringSystem === 'no-ad') {
+    return removePointNoAd(gameScore, scoringPlayer);
+  } else {
+    return removePointAd(gameScore, scoringPlayer);
+  }
+}
+
+// Remove point with ad scoring
+function removePointAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
+  const { player1Points, player2Points } = gameScore;
+  
+  if (scoringPlayer === 'player1') {
+    if (player1Points === 'game') {
+      // If game was won, go back to advantage
+      return { ...gameScore, player1Points: 'advantage', player2Points: 0 };
+    }
+    if (player1Points === 'advantage') {
+      // If had advantage, go back to 40 (deuce)
+      return { ...gameScore, player1Points: 40, player2Points: 40 };
+    }
+    if (player1Points === 40) {
+      if (player2Points === 40) {
+        // At deuce, go back to 30
+        return { ...gameScore, player1Points: 30 };
+      } else {
+        // Opponent not at 40, go back to 30
+        return { ...gameScore, player1Points: 30 };
+      }
+    }
+    if (player1Points === 30) return { ...gameScore, player1Points: 15 };
+    if (player1Points === 15) return { ...gameScore, player1Points: 0 };
+    // Can't go below 0
+    return gameScore;
+  } else {
+    if (player2Points === 'game') {
+      // If game was won, go back to advantage
+      return { ...gameScore, player2Points: 'advantage', player1Points: 0 };
+    }
+    if (player2Points === 'advantage') {
+      // If had advantage, go back to 40 (deuce)
+      return { ...gameScore, player1Points: 40, player2Points: 40 };
+    }
+    if (player2Points === 40) {
+      if (player1Points === 40) {
+        // At deuce, go back to 30
+        return { ...gameScore, player2Points: 30 };
+      } else {
+        // Opponent not at 40, go back to 30
+        return { ...gameScore, player2Points: 30 };
+      }
+    }
+    if (player2Points === 30) return { ...gameScore, player2Points: 15 };
+    if (player2Points === 15) return { ...gameScore, player2Points: 0 };
+    // Can't go below 0
+    return gameScore;
+  }
+}
+
+// Remove point with no-ad scoring
+function removePointNoAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
+  const { player1Points, player2Points } = gameScore;
+  
+  if (scoringPlayer === 'player1') {
+    if (player1Points === 'game') {
+      // If game was won, go back to 40
+      return { ...gameScore, player1Points: 40 };
+    }
+    if (player1Points === 40) {
+      if (player2Points === 40) {
+        // At deuce, go back to 30
+        return { ...gameScore, player1Points: 30 };
+      } else {
+        // Opponent not at 40, go back to 30
+        return { ...gameScore, player1Points: 30 };
+      }
+    }
+    if (player1Points === 30) return { ...gameScore, player1Points: 15 };
+    if (player1Points === 15) return { ...gameScore, player1Points: 0 };
+    // Can't go below 0
+    return gameScore;
+  } else {
+    if (player2Points === 'game') {
+      // If game was won, go back to 40
+      return { ...gameScore, player2Points: 40 };
+    }
+    if (player2Points === 40) {
+      if (player1Points === 40) {
+        // At deuce, go back to 30
+        return { ...gameScore, player2Points: 30 };
+      } else {
+        // Opponent not at 40, go back to 30
+        return { ...gameScore, player2Points: 30 };
+      }
+    }
+    if (player2Points === 30) return { ...gameScore, player2Points: 15 };
+    if (player2Points === 15) return { ...gameScore, player2Points: 0 };
+    // Can't go below 0
+    return gameScore;
+  }
+}
+
 // Check if a set is won
 export function isSetWon(setScore: SetScore, config: MatchConfig): boolean {
   const { player1Games, player2Games } = setScore;
