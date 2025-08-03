@@ -7,7 +7,7 @@ const POINT_SEQUENCE: TennisPoint[] = [0, 15, 30, 40];
 export function getNextPoint(currentPoint: TennisPoint): TennisPoint {
   const currentIndex = POINT_SEQUENCE.indexOf(currentPoint);
   if (currentIndex === -1 || currentIndex === POINT_SEQUENCE.length - 1) {
-    return 'deuce';
+    return 40; // Return 40 instead of 'deuce'
   }
   return POINT_SEQUENCE[currentIndex + 1];
 }
@@ -17,8 +17,8 @@ export function isGameWon(gameScore: GameScore, config: MatchConfig): boolean {
   const { player1Points, player2Points } = gameScore;
   
   if (config.scoringSystem === 'no-ad') {
-    // No-ad scoring: deuce = next point wins
-    if (player1Points === 'deuce' && player2Points === 'deuce') {
+    // No-ad scoring: at 40-40, next point wins
+    if (player1Points === 40 && player2Points === 40) {
       return false; // Game continues
     }
     // In no-ad, reaching 40 and winning the next point wins the game
@@ -101,9 +101,9 @@ function addPointNoAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
     if (player1Points === 40) {
       if (player2Points === 40) {
         // Deuce - next point wins
-        return { ...gameScore, player1Points: 'deuce', player2Points: 'deuce' };
+        return { ...gameScore, player1Points: 40, player2Points: 40 };
       } else {
-        return { ...gameScore, player1Points: 'deuce', player2Points: 'deuce' };
+        return { ...gameScore, player1Points: 40, player2Points: 40 };
       }
     }
   } else {
@@ -113,9 +113,9 @@ function addPointNoAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
     if (player2Points === 40) {
       if (player1Points === 40) {
         // Deuce - next point wins
-        return { ...gameScore, player2Points: 'deuce', player1Points: 'deuce' };
+        return { ...gameScore, player2Points: 40, player1Points: 40 };
       } else {
-        return { ...gameScore, player2Points: 'deuce', player1Points: 'deuce' };
+        return { ...gameScore, player2Points: 40, player1Points: 40 };
       }
     }
   }
