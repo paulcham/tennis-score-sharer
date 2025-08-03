@@ -28,6 +28,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     console.log('Before point:', gameScore);
     console.log('After point:', newGameScore);
     console.log('Scoring player:', scoringPlayer);
+    console.log('Config scoring system:', config.scoringSystem);
     
     setGameScore(newGameScore);
     
