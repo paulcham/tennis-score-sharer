@@ -86,8 +86,12 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     }
   };
 
-  const formatPoint = (point: number | string): string => {
-    if (point === 0) return '';
+  const formatPoint = (point: number | string, opponentPoint?: number | string): string => {
+    if (point === 0) {
+      // Show blank only if opponent has advantage
+      if (opponentPoint === 'advantage') return '';
+      return '0';
+    }
     if (point === 15) return '15';
     if (point === 30) return '30';
     if (point === 40) return '40';
@@ -99,6 +103,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
   const getPointColor = (point: number | string): string => {
     if (point === 'advantage') return 'text-green-600 font-bold';
     if (point === 'game') return 'text-green-700 font-bold text-lg';
+    if (point === 0) return 'text-gray-400'; // Dimmed for blank during advantage
     return '';
   };
 
@@ -122,7 +127,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
             <div className="text-center">
               <h3 className="font-semibold mb-2">{config.player1Name}</h3>
               <div className={`text-2xl font-bold ${getPointColor(gameScore.player1Points)}`}>
-                {formatPoint(gameScore.player1Points)}
+                {formatPoint(gameScore.player1Points, gameScore.player2Points)}
               </div>
               <Button 
                 onClick={() => handlePoint('player1')}
@@ -134,7 +139,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
             <div className="text-center">
               <h3 className="font-semibold mb-2">{config.player2Name}</h3>
               <div className={`text-2xl font-bold ${getPointColor(gameScore.player2Points)}`}>
-                {formatPoint(gameScore.player2Points)}
+                {formatPoint(gameScore.player2Points, gameScore.player1Points)}
               </div>
               <Button 
                 onClick={() => handlePoint('player2')}

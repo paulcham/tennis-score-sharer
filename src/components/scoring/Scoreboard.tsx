@@ -10,8 +10,12 @@ interface ScoreboardProps {
 }
 
 const Scoreboard: React.FC<ScoreboardProps> = ({ config, currentGameScore, sets, currentSet }) => {
-  const formatPoint = (point: number | string): string => {
-    if (point === 0) return '';
+  const formatPoint = (point: number | string, opponentPoint?: number | string): string => {
+    if (point === 0) {
+      // Show blank only if opponent has advantage
+      if (opponentPoint === 'advantage') return '';
+      return '0';
+    }
     if (point === 15) return '15';
     if (point === 30) return '30';
     if (point === 40) return '40';
@@ -97,7 +101,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ config, currentGameScore, sets,
               <div className="text-center">
                 <span className="text-xs text-gray-400">Game</span>
                 <div className={`text-lg font-bold ${getPointColor(currentGameScore.player1Points)}`}>
-                  {formatPoint(currentGameScore.player1Points)}
+                  {formatPoint(currentGameScore.player1Points, currentGameScore.player2Points)}
                 </div>
               </div>
             </div>
@@ -116,7 +120,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ config, currentGameScore, sets,
               {renderSetColumnsPlayer2()}
               <div className="text-center">
                 <div className={`text-lg font-bold ${getPointColor(currentGameScore.player2Points)}`}>
-                  {formatPoint(currentGameScore.player2Points)}
+                  {formatPoint(currentGameScore.player2Points, currentGameScore.player1Points)}
                 </div>
               </div>
             </div>
