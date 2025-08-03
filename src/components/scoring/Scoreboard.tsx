@@ -28,6 +28,52 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ config, currentGameScore, sets,
     return 'text-green-500';
   };
 
+  // Determine how many sets to show based on match format
+  const getSetCount = () => {
+    switch (config.matchFormat) {
+      case 'single':
+        return 1;
+      case 'best-of-3':
+        return 3;
+      case 'best-of-5':
+        return 5;
+      default:
+        return 3;
+    }
+  };
+
+  const setCount = getSetCount();
+
+  // Generate set columns dynamically
+  const renderSetColumns = () => {
+    const columns = [];
+    for (let i = 0; i < setCount; i++) {
+      columns.push(
+        <div key={i} className="text-center">
+          <span className="text-xs text-gray-400">Set {i + 1}</span>
+          <div className="text-lg font-bold text-green-400">
+            {sets[i]?.player1Games || 0}
+          </div>
+        </div>
+      );
+    }
+    return columns;
+  };
+
+  const renderSetColumnsPlayer2 = () => {
+    const columns = [];
+    for (let i = 0; i < setCount; i++) {
+      columns.push(
+        <div key={i} className="text-center">
+          <div className="text-lg font-bold text-green-400">
+            {sets[i]?.player2Games || 0}
+          </div>
+        </div>
+      );
+    }
+    return columns;
+  };
+
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardContent className="p-0">
@@ -42,31 +88,14 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ config, currentGameScore, sets,
           {/* Scoreboard Content */}
           <div className="p-6">
             {/* Player Names Row */}
-            <div className="grid grid-cols-5 gap-4 mb-4">
+            <div className={`grid gap-4 mb-4`} style={{ gridTemplateColumns: `1fr repeat(${setCount}, 1fr) 1fr` }}>
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
                   <span className="text-white text-xs">★</span>
                 </div>
                 <span className="font-semibold text-sm">{config.player1Name}</span>
               </div>
-              <div className="text-center">
-                <span className="text-xs text-gray-400">Set 1</span>
-                <div className="text-lg font-bold text-green-400">
-                  {sets[0]?.player1Games || 0}
-                </div>
-              </div>
-              <div className="text-center">
-                <span className="text-xs text-gray-400">Set 2</span>
-                <div className="text-lg font-bold text-green-400">
-                  {sets[1]?.player1Games || 0}
-                </div>
-              </div>
-              <div className="text-center">
-                <span className="text-xs text-gray-400">Set 3</span>
-                <div className="text-lg font-bold text-green-400">
-                  {sets[2]?.player1Games || 0}
-                </div>
-              </div>
+              {renderSetColumns()}
               <div className="text-center">
                 <span className="text-xs text-gray-400">Game</span>
                 <div className={`text-lg font-bold ${getPointColor(currentGameScore.player1Points)}`}>
@@ -79,28 +108,14 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ config, currentGameScore, sets,
             <div className="h-px bg-gray-700 my-4"></div>
 
             {/* Player 2 Row */}
-            <div className="grid grid-cols-5 gap-4">
+            <div className={`grid gap-4`} style={{ gridTemplateColumns: `1fr repeat(${setCount}, 1fr) 1fr` }}>
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center mr-3">
                   <span className="text-white text-xs">●</span>
                 </div>
                 <span className="font-semibold text-sm">{config.player2Name}</span>
               </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-green-400">
-                  {sets[0]?.player2Games || 0}
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-green-400">
-                  {sets[1]?.player2Games || 0}
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-green-400">
-                  {sets[2]?.player2Games || 0}
-                </div>
-              </div>
+              {renderSetColumnsPlayer2()}
               <div className="text-center">
                 <div className={`text-lg font-bold ${getPointColor(currentGameScore.player2Points)}`}>
                   {formatPoint(currentGameScore.player2Points)}
