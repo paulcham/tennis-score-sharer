@@ -25,10 +25,16 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
 
   const handlePoint = (scoringPlayer: Player) => {
     const newGameScore = addPointToGame(gameScore, scoringPlayer, config);
+    console.log('Before point:', gameScore);
+    console.log('After point:', newGameScore);
+    console.log('Scoring player:', scoringPlayer);
+    
     setGameScore(newGameScore);
     
     // Check if this point won the game
     const gameWon = checkIfGameWon(newGameScore, scoringPlayer, config);
+    console.log('Game won:', gameWon);
+    
     if (gameWon) {
       setGameHistory([...gameHistory, newGameScore]);
       
@@ -62,10 +68,13 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     
     if (config.scoringSystem === 'no-ad') {
       // No-ad: if scoring player reaches 40 and opponent is not at 40, game is won
+      // Or if both are at 40, next point wins
       if (scoringPlayer === 'player1') {
-        return player1Points === 40 && player2Points !== 40;
+        return (player1Points === 40 && player2Points !== 40) || 
+               (player1Points === 'game');
       } else {
-        return player2Points === 40 && player1Points !== 40;
+        return (player2Points === 40 && player1Points !== 40) || 
+               (player2Points === 'game');
       }
     } else {
       // Ad scoring: if scoring player has advantage or game, game is won

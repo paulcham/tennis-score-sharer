@@ -100,10 +100,11 @@ function addPointNoAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
     if (player1Points === 30) return { ...gameScore, player1Points: 40 };
     if (player1Points === 40) {
       if (player2Points === 40) {
-        // Deuce - next point wins
-        return { ...gameScore, player1Points: 40, player2Points: 40 };
+        // Deuce - next point wins the game
+        return { ...gameScore, player1Points: 'game' };
       } else {
-        return { ...gameScore, player1Points: 40, player2Points: 40 };
+        // Player 1 wins the game (opponent not at 40)
+        return { ...gameScore, player1Points: 'game' };
       }
     }
   } else {
@@ -112,10 +113,11 @@ function addPointNoAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
     if (player2Points === 30) return { ...gameScore, player2Points: 40 };
     if (player2Points === 40) {
       if (player1Points === 40) {
-        // Deuce - next point wins
-        return { ...gameScore, player2Points: 40, player1Points: 40 };
+        // Deuce - next point wins the game
+        return { ...gameScore, player2Points: 'game' };
       } else {
-        return { ...gameScore, player2Points: 40, player1Points: 40 };
+        // Player 2 wins the game (opponent not at 40)
+        return { ...gameScore, player2Points: 'game' };
       }
     }
   }
