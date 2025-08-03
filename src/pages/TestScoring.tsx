@@ -32,6 +32,13 @@ const TestScoring: React.FC = () => {
           </p>
         </div>
 
+        {/* Scoreboard at top */}
+        {showScorer && (
+          <div className="mb-8">
+            <GameScorer config={config} />
+          </div>
+        )}
+
         <div className="grid gap-6 lg:grid-cols-2">
           <Card>
             <CardHeader>
@@ -121,11 +128,9 @@ const TestScoring: React.FC = () => {
             </CardContent>
           </Card>
 
-          {showScorer && (
-            <div>
-              <GameScorer config={config} />
-            </div>
-          )}
+          <div>
+            {/* Empty space for balance */}
+          </div>
         </div>
 
         <div className="mt-8">

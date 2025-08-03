@@ -119,7 +119,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
 
   return (
     <div className="space-y-6 w-full">
-      {/* Scoreboard */}
+      {/* Scoreboard at top */}
       <Scoreboard 
         config={config}
         currentGameScore={gameScore}
@@ -128,70 +128,72 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
       />
 
       {/* Scoring Controls */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Scoring Controls</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-center">
-              <h3 className="font-semibold mb-2">{config.player1Name}</h3>
-              <div className={`text-2xl font-bold ${getPointColor(gameScore.player1Points)}`}>
-                {formatPoint(gameScore.player1Points, gameScore.player2Points)}
-              </div>
-              <Button 
-                onClick={() => handlePoint('player1')}
-                className="mt-2 w-full"
-              >
-                Point
-              </Button>
-            </div>
-            <div className="text-center">
-              <h3 className="font-semibold mb-2">{config.player2Name}</h3>
-              <div className={`text-2xl font-bold ${getPointColor(gameScore.player2Points)}`}>
-                {formatPoint(gameScore.player2Points, gameScore.player1Points)}
-              </div>
-              <Button 
-                onClick={() => handlePoint('player2')}
-                className="mt-2 w-full"
-              >
-                Point
-              </Button>
-            </div>
-          </div>
-          
-          <div className="mt-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              Server: {gameScore.server === 'player1' ? config.player1Name : config.player2Name}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Scoring: {config.scoringSystem === 'ad' ? 'Ad' : 'No-Ad'}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {gameHistory.length > 0 && (
+      <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Game History</CardTitle>
+            <CardTitle>Scoring Controls</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              {gameHistory.map((game, index) => (
-                <div key={index} className="flex justify-between items-center p-2 bg-muted rounded">
-                  <span className="text-sm">
-                    Game {index + 1}: {formatPoint(game.player1Points)} - {formatPoint(game.player2Points)}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {game.server === 'player1' ? config.player1Name : config.player2Name} served
-                  </span>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center">
+                <h3 className="font-semibold mb-2">{config.player1Name}</h3>
+                <div className={`text-2xl font-bold ${getPointColor(gameScore.player1Points)}`}>
+                  {formatPoint(gameScore.player1Points, gameScore.player2Points)}
                 </div>
-              ))}
+                <Button 
+                  onClick={() => handlePoint('player1')}
+                  className="mt-2 w-full"
+                >
+                  Point
+                </Button>
+              </div>
+              <div className="text-center">
+                <h3 className="font-semibold mb-2">{config.player2Name}</h3>
+                <div className={`text-2xl font-bold ${getPointColor(gameScore.player2Points)}`}>
+                  {formatPoint(gameScore.player2Points, gameScore.player1Points)}
+                </div>
+                <Button 
+                  onClick={() => handlePoint('player2')}
+                  className="mt-2 w-full"
+                >
+                  Point
+                </Button>
+              </div>
+            </div>
+            
+            <div className="mt-4 text-center">
+              <p className="text-sm text-muted-foreground">
+                Server: {gameScore.server === 'player1' ? config.player1Name : config.player2Name}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Scoring: {config.scoringSystem === 'ad' ? 'Ad' : 'No-Ad'}
+              </p>
             </div>
           </CardContent>
         </Card>
-      )}
+
+        {gameHistory.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Game History</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {gameHistory.map((game, index) => (
+                  <div key={index} className="flex justify-between items-center p-2 bg-muted rounded">
+                    <span className="text-sm">
+                      Game {index + 1}: {formatPoint(game.player1Points)} - {formatPoint(game.player2Points)}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {game.server === 'player1' ? config.player1Name : config.player2Name} served
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
