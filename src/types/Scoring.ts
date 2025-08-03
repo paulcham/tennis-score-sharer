@@ -1,4 +1,4 @@
-export type TennisPoint = 0 | 15 | 30 | 40 | 'deuce' | 'advantage' | 'game';
+export type TennisPoint = 0 | 15 | 30 | 40 | 'advantage' | 'game';
 export type ScoringSystem = 'ad' | 'no-ad';
 export type MatchFormat = 'single' | 'best-of-3' | 'best-of-5';
 export type SetDuration = 4 | 6 | 8;

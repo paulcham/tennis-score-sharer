@@ -51,32 +51,40 @@ function addPointAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
     if (player1Points === 30) return { ...gameScore, player1Points: 40 };
     if (player1Points === 40) {
       if (player2Points === 40) {
-        return { ...gameScore, player1Points: 'advantage' };
+        // Deuce - player 1 gets advantage
+        return { ...gameScore, player1Points: 'advantage', player2Points: 40 };
       } else if (player2Points === 'advantage') {
-        return { ...gameScore, player1Points: 'deuce', player2Points: 'deuce' };
+        // Player 2 had advantage, now back to deuce
+        return { ...gameScore, player1Points: 40, player2Points: 40 };
       } else {
         // Player 1 wins the game (opponent not at 40)
         return { ...gameScore, player1Points: 'game' };
       }
     }
-    if (player1Points === 'deuce') return { ...gameScore, player1Points: 'advantage' };
-    if (player1Points === 'advantage') return { ...gameScore, player1Points: 'deuce', player2Points: 'deuce' };
+    if (player1Points === 'advantage') {
+      // Player 1 had advantage, now wins the game
+      return { ...gameScore, player1Points: 'game' };
+    }
   } else {
     if (player2Points === 0) return { ...gameScore, player2Points: 15 };
     if (player2Points === 15) return { ...gameScore, player2Points: 30 };
     if (player2Points === 30) return { ...gameScore, player2Points: 40 };
     if (player2Points === 40) {
       if (player1Points === 40) {
-        return { ...gameScore, player2Points: 'advantage' };
+        // Deuce - player 2 gets advantage
+        return { ...gameScore, player2Points: 'advantage', player1Points: 40 };
       } else if (player1Points === 'advantage') {
-        return { ...gameScore, player2Points: 'deuce', player1Points: 'deuce' };
+        // Player 1 had advantage, now back to deuce
+        return { ...gameScore, player2Points: 40, player1Points: 40 };
       } else {
         // Player 2 wins the game (opponent not at 40)
         return { ...gameScore, player2Points: 'game' };
       }
     }
-    if (player2Points === 'deuce') return { ...gameScore, player2Points: 'advantage' };
-    if (player2Points === 'advantage') return { ...gameScore, player2Points: 'deuce', player1Points: 'deuce' };
+    if (player2Points === 'advantage') {
+      // Player 2 had advantage, now wins the game
+      return { ...gameScore, player2Points: 'game' };
+    }
   }
   
   return gameScore;

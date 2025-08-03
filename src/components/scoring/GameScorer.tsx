@@ -82,7 +82,6 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     if (point === 15) return '15';
     if (point === 30) return '30';
     if (point === 40) return '40';
-    if (point === 'deuce') return 'Deuce';
     if (point === 'advantage') return 'Ad';
     if (point === 'game') return 'Game!';
     return String(point);
@@ -90,7 +89,6 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
 
   const getPointColor = (point: number | string): string => {
     if (point === 'advantage') return 'text-green-600 font-bold';
-    if (point === 'deuce') return 'text-blue-600 font-bold';
     if (point === 'game') return 'text-green-700 font-bold text-lg';
     return '';
   };
