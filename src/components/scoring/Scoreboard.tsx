@@ -118,6 +118,13 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ config, currentGameScore, sets,
                   </span>
                 </div>
                 <div>
+                  <span className="text-gray-400">Format:</span>
+                  <span className="ml-2 font-semibold">
+                    {config.matchFormat === 'single' ? 'Single Set' : 
+                     config.matchFormat === 'best-of-3' ? 'Best of 3' : 'Best of 5'}
+                  </span>
+                </div>
+                <div>
                   <span className="text-gray-400">Server:</span>
                   <span className="ml-2 font-semibold">
                     {currentGameScore.server === 'player1' ? config.player1Name : config.player2Name}
@@ -126,10 +133,6 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ config, currentGameScore, sets,
                 <div>
                   <span className="text-gray-400">Set Duration:</span>
                   <span className="ml-2 font-semibold">{config.setDuration} games</span>
-                </div>
-                <div>
-                  <span className="text-gray-400">Current Set:</span>
-                  <span className="ml-2 font-semibold">{currentSet}</span>
                 </div>
               </div>
             </div>

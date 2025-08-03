@@ -20,7 +20,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     { player1Games: 0, player2Games: 0, isComplete: false }
   ]);
 
-  const [currentSet, setCurrentSet] = useState(1);
+  const [currentSet] = useState(1);
   const [gameHistory, setGameHistory] = useState<GameScore[]>([]);
 
   const handlePoint = (scoringPlayer: Player) => {

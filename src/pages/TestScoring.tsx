@@ -74,6 +74,19 @@ const TestScoring: React.FC = () => {
               </div>
 
               <div>
+                <label className="block text-sm font-medium mb-2">Match Format</label>
+                <select
+                  value={config.matchFormat}
+                  onChange={(e) => handleConfigChange('matchFormat', e.target.value)}
+                  className="w-full p-2 border rounded-md"
+                >
+                  <option value="single">Single Set</option>
+                  <option value="best-of-3">Best of 3 Sets</option>
+                  <option value="best-of-5">Best of 5 Sets</option>
+                </select>
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium mb-2">Set Duration</label>
                 <select
                   value={config.setDuration}
