@@ -96,7 +96,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       {/* Scoreboard */}
       <Scoreboard 
         config={config}

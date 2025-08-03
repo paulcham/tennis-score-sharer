@@ -21,8 +21,8 @@ const TestScoring: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="container mx-auto max-w-4xl">
+    <div className="min-h-screen bg-background p-4">
+      <div className="w-full">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4">
             Tennis Scoring Test
@@ -32,7 +32,7 @@ const TestScoring: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-2">
           <Card>
             <CardHeader>
               <CardTitle>Match Configuration</CardTitle>

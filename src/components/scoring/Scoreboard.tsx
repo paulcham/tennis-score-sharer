@@ -75,7 +75,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ config, currentGameScore, sets,
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className="w-full">
       <CardContent className="p-0">
         <div className="bg-gray-900 text-white rounded-lg overflow-hidden">
           {/* Header */}
