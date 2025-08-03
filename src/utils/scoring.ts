@@ -45,6 +45,28 @@ export function addPointToGame(gameScore: GameScore, scoringPlayer: Player, conf
 function addPointAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
   const { player1Points, player2Points } = gameScore;
   
+  // If either player has advantage, handle that first
+  if (player1Points === 'advantage') {
+    if (scoringPlayer === 'player1') {
+      // Player 1 had advantage and scores again - wins the game
+      return { ...gameScore, player1Points: 'game' };
+    } else {
+      // Player 1 had advantage but player 2 scores - back to deuce
+      return { ...gameScore, player1Points: 40, player2Points: 40 };
+    }
+  }
+  
+  if (player2Points === 'advantage') {
+    if (scoringPlayer === 'player2') {
+      // Player 2 had advantage and scores again - wins the game
+      return { ...gameScore, player2Points: 'game' };
+    } else {
+      // Player 2 had advantage but player 1 scores - back to deuce
+      return { ...gameScore, player1Points: 40, player2Points: 40 };
+    }
+  }
+  
+  // Normal point progression
   if (scoringPlayer === 'player1') {
     if (player1Points === 0) return { ...gameScore, player1Points: 15 };
     if (player1Points === 15) return { ...gameScore, player1Points: 30 };
@@ -53,17 +75,10 @@ function addPointAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
       if (player2Points === 40) {
         // Deuce - player 1 gets advantage
         return { ...gameScore, player1Points: 'advantage', player2Points: 0 };
-      } else if (player2Points === 'advantage') {
-        // Player 2 had advantage, now back to deuce
-        return { ...gameScore, player1Points: 40, player2Points: 40 };
       } else {
         // Player 1 wins the game (opponent not at 40)
         return { ...gameScore, player1Points: 'game' };
       }
-    }
-    if (player1Points === 'advantage') {
-      // Player 1 had advantage, now wins the game
-      return { ...gameScore, player1Points: 'game' };
     }
   } else {
     if (player2Points === 0) return { ...gameScore, player2Points: 15 };
@@ -73,17 +88,10 @@ function addPointAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
       if (player1Points === 40) {
         // Deuce - player 2 gets advantage
         return { ...gameScore, player2Points: 'advantage', player1Points: 0 };
-      } else if (player1Points === 'advantage') {
-        // Player 1 had advantage, now back to deuce
-        return { ...gameScore, player2Points: 40, player1Points: 40 };
       } else {
         // Player 2 wins the game (opponent not at 40)
         return { ...gameScore, player2Points: 'game' };
       }
-    }
-    if (player2Points === 'advantage') {
-      // Player 2 had advantage, now wins the game
-      return { ...gameScore, player2Points: 'game' };
     }
   }
   
