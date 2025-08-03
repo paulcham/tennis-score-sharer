@@ -52,7 +52,7 @@ function addPointAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
     if (player1Points === 40) {
       if (player2Points === 40) {
         // Deuce - player 1 gets advantage
-        return { ...gameScore, player1Points: 'advantage', player2Points: 40 };
+        return { ...gameScore, player1Points: 'advantage', player2Points: 0 };
       } else if (player2Points === 'advantage') {
         // Player 2 had advantage, now back to deuce
         return { ...gameScore, player1Points: 40, player2Points: 40 };
@@ -72,7 +72,7 @@ function addPointAd(gameScore: GameScore, scoringPlayer: Player): GameScore {
     if (player2Points === 40) {
       if (player1Points === 40) {
         // Deuce - player 2 gets advantage
-        return { ...gameScore, player2Points: 'advantage', player1Points: 40 };
+        return { ...gameScore, player2Points: 'advantage', player1Points: 0 };
       } else if (player1Points === 'advantage') {
         // Player 1 had advantage, now back to deuce
         return { ...gameScore, player2Points: 40, player1Points: 40 };
