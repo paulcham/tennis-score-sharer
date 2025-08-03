@@ -77,11 +77,11 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
                (player2Points === 'game');
       }
     } else {
-      // Ad scoring: if scoring player has advantage or game, game is won
+      // Ad scoring: only win if player has 'game' (not 'advantage')
       if (scoringPlayer === 'player1') {
-        return player1Points === 'advantage' || player1Points === 'game';
+        return player1Points === 'game';
       } else {
-        return player2Points === 'advantage' || player2Points === 'game';
+        return player2Points === 'game';
       }
     }
   };
