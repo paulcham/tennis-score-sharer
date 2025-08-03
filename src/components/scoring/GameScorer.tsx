@@ -30,6 +30,15 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     console.log('Scoring player:', scoringPlayer);
     console.log('Config scoring system:', config.scoringSystem);
     
+    // Debug advantage scenarios
+    if (gameScore.player1Points === 'advantage' || gameScore.player2Points === 'advantage') {
+      console.log('ADVANTAGE SCENARIO:');
+      console.log('  Player 1 had advantage:', gameScore.player1Points === 'advantage');
+      console.log('  Player 2 had advantage:', gameScore.player2Points === 'advantage');
+      console.log('  Scoring player:', scoringPlayer);
+      console.log('  New scores:', newGameScore);
+    }
+    
     setGameScore(newGameScore);
     
     // Check if this point won the game
