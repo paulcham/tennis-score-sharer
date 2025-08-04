@@ -34,7 +34,9 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    console.log('Looking for match:', matchId);
     const match = await MatchStorage.getMatch(matchId);
+    console.log('Match found:', !!match);
 
     if (!match) {
           return {

@@ -1,17 +1,44 @@
 import { Match } from '../../../src/types/Scoring';
+import * as fs from 'fs';
+import * as path from 'path';
 
-// In-memory storage for Netlify functions
-// Note: This will reset between deployments, but works for demo purposes
-let matchesStorage: Record<string, Match> = {};
+// Use a persistent file in /tmp that actually works in Netlify
+const STORAGE_FILE = '/tmp/matches.json';
 
-// Read matches from memory
-const readMatches = (): Record<string, Match> => {
-  return matchesStorage;
+// Ensure the storage file exists and is readable
+const ensureStorageFile = () => {
+  try {
+    if (!fs.existsSync(STORAGE_FILE)) {
+      fs.writeFileSync(STORAGE_FILE, JSON.stringify({}));
+    }
+  } catch (error) {
+    console.error('Error ensuring storage file:', error);
+  }
 };
 
-// Write matches to memory
+// Read matches from file with better error handling
+const readMatches = (): Record<string, Match> => {
+  try {
+    ensureStorageFile();
+    const data = fs.readFileSync(STORAGE_FILE, 'utf8');
+    const parsed = JSON.parse(data);
+    console.log('Read matches from file:', Object.keys(parsed));
+    return parsed;
+  } catch (error) {
+    console.error('Error reading matches from file:', error);
+    return {};
+  }
+};
+
+// Write matches to file with better error handling
 const writeMatches = (matches: Record<string, Match>) => {
-  matchesStorage = matches;
+  try {
+    ensureStorageFile();
+    fs.writeFileSync(STORAGE_FILE, JSON.stringify(matches, null, 2));
+    console.log('Wrote matches to file:', Object.keys(matches));
+  } catch (error) {
+    console.error('Error writing matches to file:', error);
+  }
 };
 
 export class MatchStorage {

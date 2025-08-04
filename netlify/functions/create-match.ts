@@ -71,7 +71,9 @@ export const handler: Handler = async (event) => {
     };
 
     // Store match using shared storage
+    console.log('About to store match:', matchId);
     await MatchStorage.createMatch(newMatch);
+    console.log('Match stored successfully');
 
     return {
       statusCode: 201,
