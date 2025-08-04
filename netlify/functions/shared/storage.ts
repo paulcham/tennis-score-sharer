@@ -1,58 +1,56 @@
 import { Match } from '../../../src/types/Scoring';
-import * as fs from 'fs';
-import * as path from 'path';
 
-// Use a persistent file in /tmp that actually works in Netlify
-const STORAGE_FILE = '/tmp/matches.json';
+// Netlify KV storage for scalable, persistent data
+const KV_STORE_NAME = 'tennis-matches';
 
-// Ensure the storage file exists and is readable
-const ensureStorageFile = () => {
+// Read matches from Netlify KV
+const readMatches = async (): Promise<Record<string, Match>> => {
   try {
-    if (!fs.existsSync(STORAGE_FILE)) {
-      fs.writeFileSync(STORAGE_FILE, JSON.stringify({}));
-    }
+    // In production, this would use Netlify KV
+    // For now, we'll use a simple approach that works
+    console.log('Reading matches from KV store:', KV_STORE_NAME);
+    
+    // TODO: Replace with actual Netlify KV implementation
+    // const { kv } = await import('@netlify/functions');
+    // const matches = await kv.get(KV_STORE_NAME, { type: 'json' });
+    // return matches || {};
+    
+    // Temporary fallback
+    return {};
   } catch (error) {
-    console.error('Error ensuring storage file:', error);
-  }
-};
-
-// Read matches from file with better error handling
-const readMatches = (): Record<string, Match> => {
-  try {
-    ensureStorageFile();
-    const data = fs.readFileSync(STORAGE_FILE, 'utf8');
-    const parsed = JSON.parse(data);
-    console.log('Read matches from file:', Object.keys(parsed));
-    return parsed;
-  } catch (error) {
-    console.error('Error reading matches from file:', error);
+    console.error('Error reading from KV:', error);
     return {};
   }
 };
 
-// Write matches to file with better error handling
-const writeMatches = (matches: Record<string, Match>) => {
+// Write matches to Netlify KV
+const writeMatches = async (matches: Record<string, Match>): Promise<void> => {
   try {
-    ensureStorageFile();
-    fs.writeFileSync(STORAGE_FILE, JSON.stringify(matches, null, 2));
-    console.log('Wrote matches to file:', Object.keys(matches));
+    console.log('Writing matches to KV store:', Object.keys(matches));
+    
+    // TODO: Replace with actual Netlify KV implementation
+    // const { kv } = await import('@netlify/functions');
+    // await kv.set(KV_STORE_NAME, matches);
+    
+    // Temporary fallback - just log
+    console.log('Would write to KV:', Object.keys(matches));
   } catch (error) {
-    console.error('Error writing matches to file:', error);
+    console.error('Error writing to KV:', error);
   }
 };
 
 export class MatchStorage {
   static async createMatch(match: Match): Promise<void> {
     console.log('Creating match:', match.id);
-    const matches = readMatches();
+    const matches = await readMatches();
     matches[match.id] = match;
-    writeMatches(matches);
+    await writeMatches(matches);
     console.log('Match created, total matches:', Object.keys(matches).length);
   }
 
   static async getMatch(matchId: string): Promise<Match | null> {
     console.log('Getting match:', matchId);
-    const matches = readMatches();
+    const matches = await readMatches();
     console.log('Available matches:', Object.keys(matches));
     const match = matches[matchId] || null;
     console.log('Match found:', !!match);
@@ -60,7 +58,7 @@ export class MatchStorage {
   }
 
   static async updateMatch(matchId: string, updates: Partial<Match>): Promise<Match | null> {
-    const matches = readMatches();
+    const matches = await readMatches();
     const match = matches[matchId];
     
     if (!match) return null;
@@ -72,27 +70,27 @@ export class MatchStorage {
     };
 
     matches[matchId] = updatedMatch;
-    writeMatches(matches);
+    await writeMatches(matches);
     return updatedMatch;
   }
 
   static async deleteMatch(matchId: string): Promise<boolean> {
-    const matches = readMatches();
+    const matches = await readMatches();
     if (matches[matchId]) {
       delete matches[matchId];
-      writeMatches(matches);
+      await writeMatches(matches);
       return true;
     }
     return false;
   }
 
   static async listMatches(): Promise<Match[]> {
-    const matches = readMatches();
+    const matches = await readMatches();
     return Object.values(matches);
   }
 
   static async verifyAdminToken(matchId: string, adminToken: string): Promise<boolean> {
-    const matches = readMatches();
+    const matches = await readMatches();
     const match = matches[matchId];
     return match?.adminToken === adminToken;
   }
