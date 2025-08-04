@@ -349,7 +349,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
                   const winnerName = entry.winner === 'player1' ? config.player1Name : config.player2Name;
                   
                   return (
-                    <div key={index} className="p-3 bg-orange-50 border border-orange-200 rounded">
+                    <div key={index} className="p-3 bg-orange-50 border border-orange-200 ">
                       <div className="text-sm font-medium text-orange-800">
                         Set {entry.set}, Tiebreak: {winnerName} won {entry.score.player1Points}-{entry.score.player2Points}
                       </div>
@@ -363,7 +363,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
                   const player2Name = config.player2Name;
                   
                   return (
-                    <div key={index} className="p-3 bg-muted rounded">
+                    <div key={index} className="p-3 bg-muted ">
                       <div className="text-sm font-medium">
                         Set {entry.set}, Game {entry.game}: {serverName} serving, {winnerName} won.
                       </div>

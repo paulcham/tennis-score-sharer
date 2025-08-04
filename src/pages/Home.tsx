@@ -62,19 +62,19 @@ const Home: React.FC = () => {
         <div className="mt-12 text-center">
           <h2 className="text-2xl font-semibold mb-4">Features</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 text-sm">
-            <div className="p-4 bg-card rounded-lg border">
+            <div className="p-4 bg-card  border">
               <h3 className="font-semibold mb-2">Real-time Scoring</h3>
               <p className="text-muted-foreground">Track points, games, and sets in real-time</p>
             </div>
-            <div className="p-4 bg-card rounded-lg border">
+            <div className="p-4 bg-card  border">
               <h3 className="font-semibold mb-2">Live Sharing</h3>
               <p className="text-muted-foreground">Share match URLs for live updates</p>
             </div>
-            <div className="p-4 bg-card rounded-lg border">
+            <div className="p-4 bg-card  border">
               <h3 className="font-semibold mb-2">Flexible Rules</h3>
               <p className="text-muted-foreground">Support for ad/no-ad scoring and tie breaks</p>
             </div>
-            <div className="p-4 bg-card rounded-lg border">
+            <div className="p-4 bg-card  border">
               <h3 className="font-semibold mb-2">Mobile Friendly</h3>
               <p className="text-muted-foreground">Perfect for courtside scoring</p>
             </div>

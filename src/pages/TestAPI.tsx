@@ -88,7 +88,7 @@ const TestAPI: React.FC = () => {
             </div>
 
             {result && (
-              <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+              <div className="mt-4 p-4 bg-gray-100 ">
                 <h3 className="font-semibold mb-2">Result:</h3>
                 <pre className="whitespace-pre-wrap text-sm">{result}</pre>
               </div>
