@@ -63,7 +63,9 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
           }
         };
         
-        setGameHistory([...gameHistory, tiebreakHistoryEntry]);
+        // Create updated game history with the tiebreak entry
+        const updatedGameHistory = [...gameHistory, tiebreakHistoryEntry];
+        setGameHistory(updatedGameHistory);
         
         // Update set score based on set duration (tiebreak winner wins the set)
         const updatedSets = [...sets];
@@ -84,6 +86,15 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
           player2Points: newTieBreakScore.player2Points
         };
         
+        // Add set win history entry to the updated game history
+        const setWinHistoryEntry = {
+          set: currentSet,
+          type: 'set-win',
+          winner: scoringPlayer,
+          setNumber: currentSet
+        };
+        setGameHistory([...updatedGameHistory, setWinHistoryEntry]);
+        
         // Check if match is complete
         const completedSets = updatedSets.filter(set => set.isComplete);
         const player1Sets = completedSets.filter(set => set.winner === 'player1').length;
@@ -100,9 +111,20 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         
         if (matchComplete) {
           // Set match completion state
+          const matchWinner = player1Sets >= player2Sets ? 'player1' : 'player2';
+          const finalScoreline = formatFinalScoreline(updatedSets);
+          
           setIsMatchComplete(true);
-          setMatchWinner(player1Sets >= player2Sets ? 'player1' : 'player2');
-          setFinalScoreline(formatFinalScoreline(updatedSets));
+          setMatchWinner(matchWinner);
+          setFinalScoreline(finalScoreline);
+          
+          // Add match completion history entry
+          const matchCompletionEntry = {
+            type: 'match-complete',
+            winner: matchWinner,
+            finalScoreline: finalScoreline
+          };
+          setGameHistory([...updatedGameHistory, setWinHistoryEntry, matchCompletionEntry]);
         } else {
           // Start next set
           const nextSet = currentSet + 1;
@@ -154,7 +176,9 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         }
       };
       
-      setGameHistory([...gameHistory, gameHistoryEntry]);
+      // Create updated game history with the game entry
+      const updatedGameHistory = [...gameHistory, gameHistoryEntry];
+      setGameHistory(updatedGameHistory);
       setGameNumber(gameNumber + 1);
       
       // Update set scores
@@ -196,6 +220,15 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         updatedSets[currentSetIndex].isComplete = true;
         updatedSets[currentSetIndex].winner = scoringPlayer;
         
+        // Add set win history entry to the updated game history
+        const setWinHistoryEntry = {
+          set: currentSet,
+          type: 'set-win',
+          winner: scoringPlayer,
+          setNumber: currentSet
+        };
+        setGameHistory([...updatedGameHistory, setWinHistoryEntry]);
+        
         // Check if match is complete
         const completedSets = updatedSets.filter(set => set.isComplete);
         const player1Sets = completedSets.filter(set => set.winner === 'player1').length;
@@ -212,9 +245,20 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         
         if (matchComplete) {
           // Set match completion state
+          const matchWinner = player1Sets >= player2Sets ? 'player1' : 'player2';
+          const finalScoreline = formatFinalScoreline(updatedSets);
+          
           setIsMatchComplete(true);
-          setMatchWinner(player1Sets >= player2Sets ? 'player1' : 'player2');
-          setFinalScoreline(formatFinalScoreline(updatedSets));
+          setMatchWinner(matchWinner);
+          setFinalScoreline(finalScoreline);
+          
+          // Add match completion history entry
+          const matchCompletionEntry = {
+            type: 'match-complete',
+            winner: matchWinner,
+            finalScoreline: finalScoreline
+          };
+          setGameHistory([...updatedGameHistory, setWinHistoryEntry, matchCompletionEntry]);
         } else {
           // Start next set immediately
           const nextSet = currentSet + 1;
@@ -344,7 +388,35 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
           <CardContent>
             <div className="space-y-2">
               {gameHistory.map((entry, index) => {
-                if (entry.type === 'tiebreak') {
+                if (entry.type === 'match-complete') {
+                  // Display match completion result
+                  const winnerName = entry.winner === 'player1' ? config.player1Name : config.player2Name;
+                  
+                  return (
+                    <div key={index} className="p-3 bg-blue-50 border border-blue-200">
+                      <div className="text-sm font-medium text-blue-800 mb-1">
+                        🏆 MATCH COMPLETE! 🏆
+                      </div>
+                      <div className="text-sm font-medium text-blue-800">
+                        Winner: {winnerName}
+                      </div>
+                      <div className="text-sm font-medium text-blue-800">
+                        Final Score: {entry.finalScoreline}
+                      </div>
+                    </div>
+                  );
+                } else if (entry.type === 'set-win') {
+                  // Display set win result
+                  const winnerName = entry.winner === 'player1' ? config.player1Name : config.player2Name;
+                  
+                  return (
+                    <div key={index} className="p-3 bg-green-50 border border-green-200">
+                      <div className="text-sm font-medium text-green-800">
+                        {winnerName} wins Set {entry.setNumber}.
+                      </div>
+                    </div>
+                  );
+                } else if (entry.type === 'tiebreak') {
                   // Display tiebreak result
                   const winnerName = entry.winner === 'player1' ? config.player1Name : config.player2Name;
                   

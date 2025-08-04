@@ -24,7 +24,6 @@ const TestScoring: React.FC = () => {
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="w-full">
-
         {showScorer ? (
           // Show only the scoreboard when match has started
           <div className="w-full">

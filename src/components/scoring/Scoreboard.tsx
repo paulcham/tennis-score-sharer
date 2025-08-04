@@ -81,18 +81,21 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
       const hasStarted = set && (set.player1Games > 0 || set.player2Games > 0);
       
       let setClass = "text-lg font-bold";
-      let setStyle = { color: TENNIS_COLORS.YELLOW };
+      let setStyle: React.CSSProperties = { color: TENNIS_COLORS.YELLOW };
       let cellClass = "p-4 text-center border-r";
       let cellStyle: React.CSSProperties = { borderColor: TENNIS_COLORS.WHITE };
       
       if (isComplete) {
+        // Completed sets: light grey text, no background
+        setStyle = { color: TENNIS_COLORS.LIGHT_GREY };
         if (set?.winner === 'player1') {
-          cellStyle = { ...cellStyle, backgroundColor: 'rgba(198, 237, 44, 0.2)' };
+          // Winner gets medium-dark background
+          cellStyle = { ...cellStyle, backgroundColor: TENNIS_COLORS.MEDIUM_DARK_GREY };
         }
-      } else if (tieBreakNeeded) {
-        // Keep lime green color for tiebreak scores
       } else if (isCurrentSet) {
-        // Keep lime green color for current set
+        // Active set: yellow background, black text
+        setStyle = { color: TENNIS_COLORS.BLACK };
+        cellStyle = { ...cellStyle, backgroundColor: TENNIS_COLORS.YELLOW };
       }
       
       // Format set score with tiebreak superscript if applicable
@@ -135,18 +138,21 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
       const hasStarted = set && (set.player1Games > 0 || set.player2Games > 0);
       
       let setClass = "text-lg font-bold";
-      let setStyle = { color: TENNIS_COLORS.YELLOW };
+      let setStyle: React.CSSProperties = { color: TENNIS_COLORS.YELLOW };
       let cellClass = "p-4 text-center border-r";
       let cellStyle: React.CSSProperties = { borderColor: TENNIS_COLORS.WHITE };
       
       if (isComplete) {
+        // Completed sets: light grey text, no background
+        setStyle = { color: TENNIS_COLORS.LIGHT_GREY };
         if (set?.winner === 'player2') {
-          cellStyle = { ...cellStyle, backgroundColor: 'rgba(198, 237, 44, 0.2)' };
+          // Winner gets medium-dark background
+          cellStyle = { ...cellStyle, backgroundColor: TENNIS_COLORS.MEDIUM_DARK_GREY };
         }
-      } else if (tieBreakNeeded) {
-        // Keep lime green color for tiebreak scores
       } else if (isCurrentSet) {
-        // Keep lime green color for current set
+        // Active set: yellow background, black text
+        setStyle = { color: TENNIS_COLORS.BLACK };
+        cellStyle = { ...cellStyle, backgroundColor: TENNIS_COLORS.YELLOW };
       }
       
       // Format set score with tiebreak superscript if applicable
@@ -333,19 +339,13 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
 
               {/* Player 1 Column */}
               <div className="p-4 border-r bg-gray-800 flex items-center" style={{ borderColor: TENNIS_COLORS.WHITE }}>
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: TENNIS_COLORS.BLUE }}>
-                      <span className="text-white text-xs">★</span>
-                    </div>
-                    <span className="font-semibold text-sm" style={{ color: TENNIS_COLORS.WHITE }}>{config.player1Name}</span>
-                  </div>
-                  {isTieBreak && tieBreakScore && tieBreakScore.server === 'player1' && (
-                    <div className="w-5 h-5 rounded-full" style={{ backgroundColor: TENNIS_COLORS.YELLOW }}></div>
+                <div className="flex items-center w-full">
+                  {(isTieBreak && tieBreakScore && tieBreakScore.server === 'player1') || (!isTieBreak && currentGameScore.server === 'player1') ? (
+                    <div className="w-3 h-3 rounded-full mr-3" style={{ backgroundColor: TENNIS_COLORS.YELLOW }}></div>
+                  ) : (
+                    <div className="w-3 h-3 mr-3"></div>
                   )}
-                  {!isTieBreak && currentGameScore.server === 'player1' && (
-                    <div className="w-5 h-5 rounded-full" style={{ backgroundColor: TENNIS_COLORS.YELLOW }}></div>
-                  )}
+                  <span className="font-semibold text-lg uppercase" style={{ color: TENNIS_COLORS.WHITE }}>{config.player1Name}</span>
                 </div>
               </div>
 
@@ -433,19 +433,13 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
 
                               {/* Player 2 Column */}
                 <div className="p-4 border-r bg-gray-800 flex items-center" style={{ borderColor: TENNIS_COLORS.WHITE }}>
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: TENNIS_COLORS.GREEN }}>
-                      <span className="text-white text-xs">●</span>
-                    </div>
-                    <span className="font-semibold text-sm" style={{ color: TENNIS_COLORS.WHITE }}>{config.player2Name}</span>
-                  </div>
-                  {isTieBreak && tieBreakScore && tieBreakScore.server === 'player2' && (
-                    <div className="w-5 h-5 rounded-full" style={{ backgroundColor: TENNIS_COLORS.YELLOW }}></div>
+                <div className="flex items-center w-full">
+                  {(isTieBreak && tieBreakScore && tieBreakScore.server === 'player2') || (!isTieBreak && currentGameScore.server === 'player2') ? (
+                    <div className="w-3 h-3 rounded-full mr-3" style={{ backgroundColor: TENNIS_COLORS.YELLOW }}></div>
+                  ) : (
+                    <div className="w-3 h-3 mr-3"></div>
                   )}
-                  {!isTieBreak && currentGameScore.server === 'player2' && (
-                    <div className="w-5 h-5 rounded-full" style={{ backgroundColor: TENNIS_COLORS.YELLOW }}></div>
-                  )}
+                  <span className="font-semibold text-lg uppercase" style={{ color: TENNIS_COLORS.WHITE }}>{config.player2Name}</span>
                 </div>
               </div>
 
