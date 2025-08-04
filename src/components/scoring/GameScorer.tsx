@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { GameScore, MatchConfig, Player, SetScore, TieBreakScore, Match } from '../../types/Scoring';
 import { addPointToGame, removePointFromGame, isSetWon, isTieBreakNeeded, addPointToTieBreak } from '../../utils/scoring';
@@ -48,15 +48,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
 
-  // Load existing match if matchId is provided
-  useEffect(() => {
-    if (matchId) {
-      loadExistingMatch(matchId);
-    } else {
-      // Create new match
-      createNewMatch();
-    }
-  }, [matchId]);
+
 
   const loadExistingMatch = async (id: string) => {
     try {
@@ -91,7 +83,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
     }
   };
 
-  const createNewMatch = async () => {
+  const createNewMatch = useCallback(async () => {
     try {
       setIsLoading(true);
       setError('');
@@ -108,7 +100,17 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [config]);
+
+  // Load existing match if matchId is provided
+  useEffect(() => {
+    if (matchId) {
+      loadExistingMatch(matchId);
+    } else {
+      // Create new match
+      createNewMatch();
+    }
+  }, [matchId, createNewMatch]);
 
   const updateMatch = async (updates: Partial<Match>) => {
     if (isReadOnly) return; // Don't update in read-only mode

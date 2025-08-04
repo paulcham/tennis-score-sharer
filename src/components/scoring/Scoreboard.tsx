@@ -2,7 +2,6 @@ import React from 'react';
 import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { GameScore, SetScore, MatchConfig, Player, TieBreakScore } from '../../types/Scoring';
-import { isTieBreakNeeded } from '../../utils/scoring';
 import { TENNIS_COLORS } from '../../lib/colors';
 
 interface ScoreboardProps {
@@ -79,7 +78,6 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
       const set = sets[i];
       const isComplete = set?.isComplete || false;
       const isCurrentSet = i === currentSet - 1;
-      const tieBreakNeeded = set && isTieBreakNeeded(set, config);
       const hasStarted = set && (set.player1Games > 0 || set.player2Games > 0);
       
       let setClass = "text-lg font-bold";
@@ -142,7 +140,6 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
       const set = sets[i];
       const isComplete = set?.isComplete || false;
       const isCurrentSet = i === currentSet - 1;
-      const tieBreakNeeded = set && isTieBreakNeeded(set, config);
       const hasStarted = set && (set.player1Games > 0 || set.player2Games > 0);
       
       let setClass = "text-lg font-bold";
@@ -261,12 +258,12 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
             <div 
               className="grid gap-0 mb-4"
               style={{ 
-                gridTemplateColumns: `120px 1fr repeat(${setCount}, 80px) 80px`,
-                gridTemplateAreas: `"buttons player1 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game1"`
+                gridTemplateColumns: isReadOnly ? `1fr repeat(${setCount}, 80px) 80px` : `120px 1fr repeat(${setCount}, 80px) 80px`,
+                gridTemplateAreas: isReadOnly ? `"player1 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game1"` : `"buttons player1 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game1"`
               }}
             >
               {/* Empty Buttons Column */}
-              <div></div>
+              {!isReadOnly && <div></div>}
 
               {/* Empty Player Column */}
               <div></div>
@@ -292,8 +289,8 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
             <div 
               className="grid gap-0 mb-4 border  overflow-hidden"
               style={{ 
-                gridTemplateColumns: `120px 1fr repeat(${setCount}, 80px) 80px`,
-                gridTemplateAreas: `"buttons player1 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game1"`,
+                gridTemplateColumns: isReadOnly ? `1fr repeat(${setCount}, 80px) 80px` : `120px 1fr repeat(${setCount}, 80px) 80px`,
+                gridTemplateAreas: isReadOnly ? `"player1 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game1"` : `"buttons player1 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game1"`,
                 borderColor: TENNIS_COLORS.WHITE
               }}
             >
@@ -352,13 +349,6 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
                   </div>
                 </div>
               )}
-              
-              {/* Empty space for read-only mode */}
-              {isReadOnly && (
-                <div className="p-4 border-r bg-gray-800" style={{ borderColor: TENNIS_COLORS.WHITE }}>
-                  <div className="w-10 h-10"></div>
-                </div>
-              )}
 
               {/* Player 1 Column */}
               <div className="p-4 border-r bg-gray-800 flex items-center" style={{ borderColor: TENNIS_COLORS.WHITE }}>
@@ -395,8 +385,8 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
             <div 
               className="grid gap-0 border overflow-hidden"
               style={{ 
-                gridTemplateColumns: `120px 1fr repeat(${setCount}, 80px) 80px`,
-                gridTemplateAreas: `"buttons player2 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game2"`,
+                gridTemplateColumns: isReadOnly ? `1fr repeat(${setCount}, 80px) 80px` : `120px 1fr repeat(${setCount}, 80px) 80px`,
+                gridTemplateAreas: isReadOnly ? `"player2 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game2"` : `"buttons player2 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game2"`,
                 borderColor: TENNIS_COLORS.WHITE
               }}
             >
@@ -453,13 +443,6 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
                       Make Server
                     </Button>
                   </div>
-                </div>
-              )}
-              
-              {/* Empty space for read-only mode */}
-              {isReadOnly && (
-                <div className="p-4 border-r bg-gray-800" style={{ borderColor: TENNIS_COLORS.WHITE }}>
-                  <div className="w-10 h-10"></div>
                 </div>
               )}
 
