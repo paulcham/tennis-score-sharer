@@ -1,0 +1,8 @@
+# Supabase Configuration
+# Get these from your Supabase project settings -> API
+REACT_APP_SUPABASE_URL=https://your-project-id.supabase.co
+REACT_APP_SUPABASE_ANON_KEY=your-anon-key-here
+
+# For Netlify Functions (server-side)
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here 
