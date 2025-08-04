@@ -1,59 +1,74 @@
 import { Match } from '../../../src/types/Scoring';
 
-// Netlify KV storage for scalable, persistent data
-const KV_STORE_NAME = 'tennis-matches';
+// DEBUG: Let's understand what's happening with storage
+let matchesStorage: Record<string, Match> = {};
 
-// Read matches from Netlify KV
-const readMatches = async (): Promise<Record<string, Match>> => {
-  try {
-    // In production, this would use Netlify KV
-    // For now, we'll use a simple approach that works
-    console.log('Reading matches from KV store:', KV_STORE_NAME);
-    
-    // TODO: Replace with actual Netlify KV implementation
-    // const { kv } = await import('@netlify/functions');
-    // const matches = await kv.get(KV_STORE_NAME, { type: 'json' });
-    // return matches || {};
-    
-    // Temporary fallback
-    return {};
-  } catch (error) {
-    console.error('Error reading from KV:', error);
-    return {};
-  }
+// DEBUG: Track all operations
+const debugLog = (operation: string, data?: any) => {
+  const timestamp = new Date().toISOString();
+  console.log(`[${timestamp}] STORAGE DEBUG - ${operation}:`, data);
 };
 
-// Write matches to Netlify KV
+// Read matches from storage
+const readMatches = async (): Promise<Record<string, Match>> => {
+  debugLog('READ_MATCHES', {
+    storageKeys: Object.keys(matchesStorage),
+    storageSize: Object.keys(matchesStorage).length,
+    storageContent: matchesStorage
+  });
+  return matchesStorage;
+};
+
+// Write matches to storage
 const writeMatches = async (matches: Record<string, Match>): Promise<void> => {
-  try {
-    console.log('Writing matches to KV store:', Object.keys(matches));
-    
-    // TODO: Replace with actual Netlify KV implementation
-    // const { kv } = await import('@netlify/functions');
-    // await kv.set(KV_STORE_NAME, matches);
-    
-    // Temporary fallback - just log
-    console.log('Would write to KV:', Object.keys(matches));
-  } catch (error) {
-    console.error('Error writing to KV:', error);
-  }
+  debugLog('WRITE_MATCHES', {
+    newKeys: Object.keys(matches),
+    newSize: Object.keys(matches).length,
+    newContent: matches
+  });
+  matchesStorage = matches;
 };
 
 export class MatchStorage {
   static async createMatch(match: Match): Promise<void> {
-    console.log('Creating match:', match.id);
+    debugLog('CREATE_MATCH_START', { matchId: match.id, matchData: match });
+    
     const matches = await readMatches();
+    debugLog('CREATE_MATCH_READ_STORAGE', { 
+      existingKeys: Object.keys(matches),
+      existingSize: Object.keys(matches).length 
+    });
+    
     matches[match.id] = match;
+    debugLog('CREATE_MATCH_ADDED_TO_STORAGE', { 
+      newKeys: Object.keys(matches),
+      newSize: Object.keys(matches).length 
+    });
+    
     await writeMatches(matches);
-    console.log('Match created, total matches:', Object.keys(matches).length);
+    debugLog('CREATE_MATCH_COMPLETE', { 
+      finalKeys: Object.keys(matches),
+      finalSize: Object.keys(matches).length 
+    });
   }
 
   static async getMatch(matchId: string): Promise<Match | null> {
-    console.log('Getting match:', matchId);
+    debugLog('GET_MATCH_START', { matchId });
+    
     const matches = await readMatches();
-    console.log('Available matches:', Object.keys(matches));
+    debugLog('GET_MATCH_READ_STORAGE', { 
+      availableKeys: Object.keys(matches),
+      availableSize: Object.keys(matches).length,
+      lookingFor: matchId 
+    });
+    
     const match = matches[matchId] || null;
-    console.log('Match found:', !!match);
+    debugLog('GET_MATCH_RESULT', { 
+      matchFound: !!match,
+      matchId,
+      matchData: match 
+    });
+    
     return match;
   }
 
