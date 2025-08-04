@@ -1,47 +1,35 @@
 import { Match } from '../../../src/types/Scoring';
-import * as fs from 'fs';
-import * as path from 'path';
 
-const STORAGE_FILE = '/tmp/matches.json';
+// In-memory storage for Netlify functions
+// Note: This will reset between deployments, but works for demo purposes
+let matchesStorage: Record<string, Match> = {};
 
-// Ensure the storage file exists
-const ensureStorageFile = () => {
-  if (!fs.existsSync(STORAGE_FILE)) {
-    fs.writeFileSync(STORAGE_FILE, JSON.stringify({}));
-  }
-};
-
-// Read matches from file
+// Read matches from memory
 const readMatches = (): Record<string, Match> => {
-  try {
-    ensureStorageFile();
-    const data = fs.readFileSync(STORAGE_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Error reading matches:', error);
-    return {};
-  }
+  return matchesStorage;
 };
 
-// Write matches to file
+// Write matches to memory
 const writeMatches = (matches: Record<string, Match>) => {
-  try {
-    fs.writeFileSync(STORAGE_FILE, JSON.stringify(matches, null, 2));
-  } catch (error) {
-    console.error('Error writing matches:', error);
-  }
+  matchesStorage = matches;
 };
 
 export class MatchStorage {
   static async createMatch(match: Match): Promise<void> {
+    console.log('Creating match:', match.id);
     const matches = readMatches();
     matches[match.id] = match;
     writeMatches(matches);
+    console.log('Match created, total matches:', Object.keys(matches).length);
   }
 
   static async getMatch(matchId: string): Promise<Match | null> {
+    console.log('Getting match:', matchId);
     const matches = readMatches();
-    return matches[matchId] || null;
+    console.log('Available matches:', Object.keys(matches));
+    const match = matches[matchId] || null;
+    console.log('Match found:', !!match);
+    return match;
   }
 
   static async updateMatch(matchId: string, updates: Partial<Match>): Promise<Match | null> {
