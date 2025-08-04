@@ -3,6 +3,40 @@
 ## Project Overview
 A real-time tennis match scoring and sharing web application that allows parents to track and share their children's tennis matches in real-time.
 
+## User Roles & Workflow
+
+### 🎯 **Primary User Flow**
+
+1. **Match Admin** (Score Recorder)
+   - Goes to app and clicks "Start New Match"
+   - Configures match settings (scoring system, format, player names, etc.)
+   - Gets access to interactive scoreboard with scoring controls
+   - Receives a shareable URL to distribute to viewers
+   - Records scores in real-time during the match
+   - Can pause/resume match if needed
+
+2. **Match Viewer** (Score Follower)
+   - Receives shareable URL from match admin
+   - Views read-only scoreboard (same layout, no controls)
+   - Sees real-time score updates
+   - Can view match history and game-by-game breakdown
+   - No authentication required - just needs the URL
+
+### 🔑 **Key Features by Role**
+
+#### Match Admin Features
+- ✅ **Match Configuration**: Set scoring rules, player names, format
+- ✅ **Interactive Scoring**: Point buttons, undo functionality, server controls
+- ✅ **Match Management**: Start, pause, resume, complete matches
+- ✅ **Shareable Links**: Generate and distribute public URLs
+- ⏳ **Match History**: View past matches and their results
+
+#### Match Viewer Features
+- ⏳ **Read-only Scoreboard**: Same visual layout, no controls
+- ⏳ **Real-time Updates**: Live score updates without refresh
+- ⏳ **Match History**: View completed games and sets
+- ⏳ **Mobile Optimized**: Works great on phones for parents watching
+
 ## Tech Stack
 - **Frontend**: React with TypeScript
 - **UI Components**: shadcn/ui (built on Radix UI + Tailwind CSS)
@@ -21,23 +55,25 @@ A real-time tennis match scoring and sharing web application that allows parents
 - **Tie Break Rules**: No tie break, 7-point, 10-point
 - **Player Names**: Home player vs Away player
 
-### 2. Match Scoring Interface
+### 2. Match Scoring Interface (Admin Only)
 - **Game Scoring**: 0, 15, 30, 40, Deuce, Advantage
 - **Set Scoring**: Track games won per set
 - **Match Scoring**: Track sets won per player
 - **Point Buttons**: Easy one-click scoring
 - **Undo Functionality**: Mistake correction
 - **Match Status**: In Progress, Completed, Paused
+- **Server Controls**: Manual server assignment
 
 ### 3. Real-time Sharing
 - **Unique Match URLs**: Each match gets a shareable URL
 - **Live Updates**: Real-time score updates for viewers
-- **Match History**: View completed matches
-- **Public/Private**: Option to make matches private
+- **Match History**: View completed matches and games
+- **Public Access**: No authentication required for viewers
+- **Admin Controls**: Only match creator can modify scores
 
 ### 4. Match Management
 - **Create New Match**: Quick setup with defaults
-- **Active Matches**: List of ongoing matches
+- **Active Matches**: List of ongoing matches for admin
 - **Match Archive**: Historical matches
 - **Export/Import**: Match data backup
 
@@ -52,10 +88,10 @@ src/
 │   ├── match/        # Match management components
 │   └── shared/       # Common components
 ├── pages/
-│   ├── Home.tsx      # Landing page
-│   ├── NewMatch.tsx  # Match creation
-│   ├── ScoreMatch.tsx # Active scoring interface
-│   ├── ViewMatch.tsx # Public match viewing
+│   ├── Home.tsx      # Landing page with "Start New Match"
+│   ├── NewMatch.tsx  # Match creation and configuration
+│   ├── ScoreMatch.tsx # Admin scoring interface (current TestScoring)
+│   ├── ViewMatch.tsx # Public match viewing (read-only)
 │   └── MatchHistory.tsx # Past matches
 ├── hooks/
 │   ├── useMatch.ts   # Match state management
@@ -113,6 +149,7 @@ interface Match {
   createdAt: Date;
   updatedAt: Date;
   shareUrl: string;
+  adminToken?: string; // For admin access
 }
 
 interface GameScore {
@@ -138,14 +175,14 @@ interface TieBreakScore {
 
 ## Development Phases
 
-### Phase 1: Core Setup & Basic Scoring
-1. **Project Setup**
+### Phase 1: Core Setup & Basic Scoring ✅ COMPLETED
+1. **Project Setup** ✅
    - Initialize React + TypeScript project
    - Set up shadcn/ui
    - Configure Netlify deployment
    - Create basic project structure
 
-2. **Tennis Scoring Logic**
+2. **Tennis Scoring Logic** ✅
    - Implement game scoring (0, 15, 30, 40, deuce, advantage)
    - Handle ad vs no-ad scoring systems
    - Implement set scoring with 2-game advantage rule
@@ -154,35 +191,36 @@ interface TieBreakScore {
    - Implement pro-set scoring (8 games)
    - Add undo functionality for mistake correction
 
-3. **Basic UI Components**
+3. **Basic UI Components** ✅
    - Match creation form
-   - Basic scoring interface
-   - Score display components
+   - Advanced scoring interface with grid layout
+   - Score display components with tennis styling
+   - Match completion announcement system
 
-### Phase 2: Match Management & Real-time Features
+### Phase 2: Match Management & Real-time Features 🔄 CURRENT
 1. **Netlify Functions**
    - Create/update/get match endpoints
    - Simple data persistence
    - Real-time update mechanism
 
 2. **Match Management**
-   - Create new matches
+   - Create new matches with proper UI
    - Active match tracking
    - Match history
 
 3. **Real-time Sharing**
    - Unique match URLs
    - Live score updates
-   - Public match viewing
+   - Public match viewing interface
 
 ### Phase 3: Advanced Features & Polish
 1. **Advanced Scoring**
-   - Tie break implementation
-   - Different set durations
-   - Match format variations
+   - Tie break implementation ✅
+   - Different set durations ✅
+   - Match format variations ✅
 
 2. **UI/UX Improvements**
-   - Mobile-responsive design
+   - Mobile-responsive design ✅
    - Smooth animations
    - Better visual feedback
 
@@ -251,10 +289,10 @@ interface TieBreakScore {
 - [ ] Shareable URLs work reliably
 
 ## Next Steps
-1. Set up the React project with TypeScript
-2. Install and configure shadcn/ui
-3. Create basic tennis scoring logic
-4. Build the match creation interface
-5. Implement basic scoring UI
+1. Set up Netlify Functions for data persistence
+2. Create proper match creation flow
+3. Implement shareable URLs
+4. Build read-only viewer interface
+5. Add real-time updates
 
-Ready to start with Phase 1? 
+Ready to start with Phase 2! 
