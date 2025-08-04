@@ -3,9 +3,24 @@ import { Match } from '../../src/types/Scoring';
 import { MatchStorage } from './shared/storage';
 
 export const handler: Handler = async (event) => {
+  // Handle CORS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      } as Record<string, string>,
+    };
+  }
+
   if (event.httpMethod !== 'PUT') {
     return {
       statusCode: 405,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      } as Record<string, string>,
       body: JSON.stringify({ error: 'Method not allowed' }),
     };
   }
@@ -21,6 +36,9 @@ export const handler: Handler = async (event) => {
     if (!matchId || !adminToken) {
       return {
         statusCode: 400,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
         body: JSON.stringify({ error: 'Match ID and admin token are required' }),
       };
     }
@@ -31,6 +49,9 @@ export const handler: Handler = async (event) => {
     if (!isAuthorized) {
       return {
         statusCode: 403,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
         body: JSON.stringify({ error: 'Unauthorized access' }),
       };
     }
@@ -41,6 +62,9 @@ export const handler: Handler = async (event) => {
     if (!updatedMatch) {
       return {
         statusCode: 404,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
         body: JSON.stringify({ error: 'Match not found' }),
       };
     }
@@ -49,6 +73,7 @@ export const handler: Handler = async (event) => {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({
         match: updatedMatch,
@@ -59,6 +84,9 @@ export const handler: Handler = async (event) => {
     console.error('Error updating match:', error);
     return {
       statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
       body: JSON.stringify({ error: 'Internal server error' }),
     };
   }

@@ -3,12 +3,27 @@ import { Match, MatchConfig } from '../../src/types/Scoring';
 import { MatchStorage } from './shared/storage';
 
 export const handler: Handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
+  // Handle CORS preflight requests
+  if (event.httpMethod === 'OPTIONS') {
     return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' }),
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      } as Record<string, string>,
     };
   }
+
+      if (event.httpMethod !== 'POST') {
+      return {
+        statusCode: 405,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        } as Record<string, string>,
+        body: JSON.stringify({ error: 'Method not allowed' }),
+      };
+    }
 
   try {
     const body = JSON.parse(event.body || '{}');
@@ -62,6 +77,7 @@ export const handler: Handler = async (event) => {
       statusCode: 201,
       headers: {
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({
         match: newMatch,
@@ -72,6 +88,9 @@ export const handler: Handler = async (event) => {
     console.error('Error creating match:', error);
     return {
       statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
       body: JSON.stringify({ error: 'Internal server error' }),
     };
   }

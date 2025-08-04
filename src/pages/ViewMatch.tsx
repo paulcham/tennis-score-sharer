@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { MatchAPI } from '../services/api';
-import { Match, MatchConfig } from '../types/Scoring';
+import { Match } from '../types/Scoring';
 import Scoreboard from '../components/scoring/Scoreboard';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { useMatchUpdates } from '../hooks/useMatchUpdates';
