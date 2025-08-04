@@ -52,4 +52,5 @@ export interface Match {
   createdAt: Date;
   updatedAt: Date;
   shareUrl: string;
+  adminToken?: string; // For admin access control
 } 
