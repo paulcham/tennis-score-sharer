@@ -37,23 +37,16 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     const currentSetIndex = currentSet - 1;
     const currentSetData = sets[currentSetIndex];
     if (currentSetData?.isComplete) {
-      console.log(`Set ${currentSet} is already complete. Cannot score more points.`);
       return;
     }
 
     // Handle tiebreak scoring
     if (isTieBreak) {
       const newTieBreakScore = addPointToTieBreak(tieBreakScore, scoringPlayer, config);
-      console.log('Tiebreak point scored:', scoringPlayer);
-      console.log('Current tiebreak score:', tieBreakScore);
-      console.log('New tiebreak score:', newTieBreakScore);
-      console.log('Server changed from', tieBreakScore.server, 'to', newTieBreakScore.server);
       
       setTieBreakScore(newTieBreakScore);
       
       if (newTieBreakScore.isComplete) {
-        console.log(`Tiebreak complete! Winner: ${scoringPlayer}`);
-        
         // Create tiebreak history entry
         const tiebreakHistoryEntry = {
           set: currentSet,
@@ -101,7 +94,6 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         }
         
         if (matchComplete) {
-          console.log('Match complete!');
           // Could add match completion logic here
         } else {
           // Start next set
@@ -134,25 +126,11 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     }
 
     const newGameScore = addPointToGame(gameScore, scoringPlayer, config);
-    console.log('Before point:', gameScore);
-    console.log('After point:', newGameScore);
-    console.log('Scoring player:', scoringPlayer);
-    console.log('Config scoring system:', config.scoringSystem);
-    
-    // Debug advantage scenarios
-    if (gameScore.player1Points === 'advantage' || gameScore.player2Points === 'advantage') {
-      console.log('ADVANTAGE SCENARIO:');
-      console.log('  Player 1 had advantage:', gameScore.player1Points === 'advantage');
-      console.log('  Player 2 had advantage:', gameScore.player2Points === 'advantage');
-      console.log('  Scoring player:', scoringPlayer);
-      console.log('  New scores:', newGameScore);
-    }
     
     setGameScore(newGameScore);
     
     // Check if this point won the game
     const gameWon = checkIfGameWon(newGameScore, scoringPlayer, config);
-    console.log('Game won:', gameWon);
     
     if (gameWon) {
       // Create detailed game history entry
@@ -186,7 +164,6 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
       // Check if tiebreak is needed BEFORE checking set completion
       const tieBreakNeeded = isTieBreakNeeded(updatedSets[currentSetIndex], config);
       if (tieBreakNeeded) {
-        console.log('Tiebreak needed! Starting tiebreak...');
         setIsTieBreak(true);
         setTieBreakScore({
           player1Points: 0,
@@ -210,7 +187,6 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
       if (setComplete) {
         updatedSets[currentSetIndex].isComplete = true;
         updatedSets[currentSetIndex].winner = scoringPlayer;
-        console.log(`Set ${currentSet} complete! Winner: ${scoringPlayer}`);
         
         // Check if match is complete
         const completedSets = updatedSets.filter(set => set.isComplete);
@@ -227,7 +203,6 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         }
         
         if (matchComplete) {
-          console.log('Match complete!');
           // Could add match completion logic here
         } else {
           // Start next set immediately
@@ -256,27 +231,21 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     const currentSetIndex = currentSet - 1;
     const currentSetData = sets[currentSetIndex];
     if (currentSetData?.isComplete) {
-      console.log(`Set ${currentSet} is already complete. Cannot remove points.`);
       return;
     }
 
     // For tiebreak, we can't easily remove points since it's just incrementing numbers
     // We'll need to implement a more sophisticated undo system
     if (isTieBreak) {
-      console.log('Tiebreak point removal not implemented yet');
       return;
     }
 
     const newGameScore = removePointFromGame(gameScore, scoringPlayer, config);
-    console.log('Before removing point:', gameScore);
-    console.log('After removing point:', newGameScore);
-    console.log('Removing point for player:', scoringPlayer);
     
     setGameScore(newGameScore);
   };
 
   const handleSetServer = (player: Player) => {
-    console.log('Setting server to:', player);
     
     if (isTieBreak) {
       // Update tiebreak server

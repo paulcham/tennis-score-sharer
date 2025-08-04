@@ -268,37 +268,25 @@ export function addPointToTieBreak(tieBreakScore: TieBreakScore, scoringPlayer: 
   const requiredPoints = config.tieBreakRules === '10-point' ? 10 : 7;
   const totalPoints = player1Points + player2Points;
   
-  console.log('Tiebreak server calculation:');
-  console.log('  Current server:', server);
-  console.log('  Total points before scoring:', totalPoints);
-  console.log('  Scoring player:', scoringPlayer);
-  
   // Determine who should serve next based on tiebreak rules
   let nextServer: Player;
   
   // Calculate which server should serve the NEXT point (after this one is scored)
   const nextPointNumber = totalPoints + 2; // The point after the one we're about to score
   
-  console.log('  Next point number (after scoring):', nextPointNumber);
-  
   if (nextPointNumber === 1) {
     // Point 1: original server
     nextServer = server;
-    console.log('  Point 1 - keeping server:', nextServer);
   } else {
     // Simple logic: switch servers on even-numbered points
     if (nextPointNumber % 2 === 0) {
       // Even point - switch to other player
       nextServer = server === 'player1' ? 'player2' : 'player1';
-      console.log('  Even point - switching to other player:', nextServer);
     } else {
       // Odd point - keep same player
       nextServer = server;
-      console.log('  Odd point - keeping same player:', nextServer);
     }
   }
-  
-  console.log('  Next server will be:', nextServer);
   
   if (scoringPlayer === 'player1') {
     const newPlayer1Points = player1Points + 1;
