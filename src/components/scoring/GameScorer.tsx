@@ -32,6 +32,11 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     server: 'player1'
   });
 
+  // Match completion state
+  const [isMatchComplete, setIsMatchComplete] = useState(false);
+  const [matchWinner, setMatchWinner] = useState<Player | null>(null);
+  const [finalScoreline, setFinalScoreline] = useState<string>('');
+
   const handlePoint = (scoringPlayer: Player) => {
     // Check if current set is already complete - if so, don't allow scoring
     const currentSetIndex = currentSet - 1;
@@ -94,7 +99,10 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         }
         
         if (matchComplete) {
-          // Could add match completion logic here
+          // Set match completion state
+          setIsMatchComplete(true);
+          setMatchWinner(player1Sets >= player2Sets ? 'player1' : 'player2');
+          setFinalScoreline(formatFinalScoreline(updatedSets));
         } else {
           // Start next set
           const nextSet = currentSet + 1;
@@ -203,7 +211,10 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         }
         
         if (matchComplete) {
-          // Could add match completion logic here
+          // Set match completion state
+          setIsMatchComplete(true);
+          setMatchWinner(player1Sets >= player2Sets ? 'player1' : 'player2');
+          setFinalScoreline(formatFinalScoreline(updatedSets));
         } else {
           // Start next set immediately
           const nextSet = currentSet + 1;
@@ -286,6 +297,26 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     }
   };
 
+  // Format final scoreline for completed match
+  const formatFinalScoreline = (sets: SetScore[]): string => {
+    return sets
+      .filter(set => set.isComplete)
+      .map(set => {
+        if (set.tieBreakScore) {
+          // Show tiebreak score (e.g., "7-6(7-5)")
+          const winnerGames = set.winner === 'player1' ? set.player1Games : set.player2Games;
+          const loserGames = set.winner === 'player1' ? set.player2Games : set.player1Games;
+          const winnerTiebreak = set.winner === 'player1' ? set.tieBreakScore.player1Points : set.tieBreakScore.player2Points;
+          const loserTiebreak = set.winner === 'player1' ? set.tieBreakScore.player2Points : set.tieBreakScore.player1Points;
+          return `${winnerGames}-${loserGames}(${winnerTiebreak}-${loserTiebreak})`;
+        } else {
+          // Show regular set score
+          return `${set.player1Games}-${set.player2Games}`;
+        }
+      })
+      .join(', ');
+  };
+
   return (
     <div className="space-y-6 w-full">
       {/* Scoreboard at top */}
@@ -299,6 +330,9 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         isTieBreak={isTieBreak}
         tieBreakScore={tieBreakScore}
         onSetServer={handleSetServer}
+        isMatchComplete={isMatchComplete}
+        matchWinner={matchWinner}
+        finalScoreline={finalScoreline}
       />
 
       {/* Game History */}

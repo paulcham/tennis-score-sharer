@@ -14,6 +14,9 @@ interface ScoreboardProps {
   onSetServer: (player: Player) => void;
   isTieBreak?: boolean;
   tieBreakScore?: TieBreakScore;
+  isMatchComplete?: boolean;
+  matchWinner?: Player | null;
+  finalScoreline?: string;
 }
 
 const Scoreboard: React.FC<ScoreboardProps> = ({ 
@@ -25,7 +28,10 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
   onRemovePoint,
   onSetServer,
   isTieBreak = false,
-  tieBreakScore
+  tieBreakScore,
+  isMatchComplete,
+  matchWinner,
+  finalScoreline
 }) => {
   const formatPoint = (point: number | string, opponentPoint?: number | string): string => {
     if (point === 0) {
@@ -172,9 +178,8 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
     return columns;
   };
 
-  // Check if current set needs tiebreak
+  // Check if current set is complete
   const currentSetData = sets[currentSet - 1];
-  const tieBreakNeeded = currentSetData && isTieBreakNeeded(currentSetData, config);
   const currentSetComplete = currentSetData?.isComplete || false;
 
   // Format current game/tiebreak score for individual player
@@ -205,12 +210,29 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
     <Card className="w-full">
       <CardContent className="p-0">
         <div className="bg-gray-900 text-white rounded-lg overflow-hidden">
-          {/* Header */}
-          <div className="bg-gray-800 px-6 py-3 border-b border-gray-700">
-            <h2 className="text-xl font-bold text-center" style={{ color: '#4CAF50' }}>
-              MatchSync
-            </h2>
-          </div>
+                      {/* Header */}
+            <div className="bg-gray-800 px-6 py-3 border-b border-gray-700">
+              <h2 className="text-xl font-bold text-center" style={{ color: '#4CAF50' }}>
+                MatchSync
+              </h2>
+            </div>
+
+            {/* Match Completion Announcement */}
+            {isMatchComplete && matchWinner && finalScoreline && (
+              <div className="bg-green-600 px-6 py-4 border-b border-green-700">
+                <div className="text-center">
+                  <h3 className="text-lg font-bold text-white mb-1">
+                    🏆 MATCH COMPLETE! 🏆
+                  </h3>
+                  <p className="text-white font-semibold">
+                    Winner: {matchWinner === 'player1' ? config.player1Name : config.player2Name}
+                  </p>
+                  <p className="text-white text-sm mt-1">
+                    Final Score: {finalScoreline}
+                  </p>
+                </div>
+              </div>
+            )}
 
           {/* Scoreboard Content */}
           <div className="p-6">
