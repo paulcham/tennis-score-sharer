@@ -86,11 +86,17 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
       let cellStyle: React.CSSProperties = { borderColor: TENNIS_COLORS.WHITE };
       
       if (isComplete) {
-        // Completed sets: light grey text, no background
-        setStyle = { color: TENNIS_COLORS.LIGHT_GREY };
+        // Completed sets: use winner/loser styling
         if (set?.winner === 'player1') {
-          // Winner gets medium-dark background
+          // Player 1 won this set - white text with dark background
+          setStyle = { color: TENNIS_COLORS.WHITE };
           cellStyle = { ...cellStyle, backgroundColor: TENNIS_COLORS.MEDIUM_DARK_GREY };
+        } else if (set?.winner === 'player2') {
+          // Player 1 lost this set - light grey text, no background
+          setStyle = { color: TENNIS_COLORS.LIGHT_GREY };
+        } else {
+          // No winner determined yet - white text
+          setStyle = { color: TENNIS_COLORS.WHITE };
         }
       } else if (isCurrentSet) {
         // Active set: yellow background, black text
@@ -110,7 +116,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
       
       columns.push({
         key: i,
-        content: hasStarted ? (
+        content: (hasStarted || isCurrentSet) ? (
           <>
             <div className={setClass} style={setStyle}>
               {formatSetScore(sets[i]?.player1Games || 0, true)}
@@ -143,11 +149,17 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
       let cellStyle: React.CSSProperties = { borderColor: TENNIS_COLORS.WHITE };
       
       if (isComplete) {
-        // Completed sets: light grey text, no background
-        setStyle = { color: TENNIS_COLORS.LIGHT_GREY };
+        // Completed sets: use winner/loser styling
         if (set?.winner === 'player2') {
-          // Winner gets medium-dark background
+          // Player 2 won this set - white text with dark background
+          setStyle = { color: TENNIS_COLORS.WHITE };
           cellStyle = { ...cellStyle, backgroundColor: TENNIS_COLORS.MEDIUM_DARK_GREY };
+        } else if (set?.winner === 'player1') {
+          // Player 2 lost this set - light grey text, no background
+          setStyle = { color: TENNIS_COLORS.LIGHT_GREY };
+        } else {
+          // No winner determined yet - white text
+          setStyle = { color: TENNIS_COLORS.WHITE };
         }
       } else if (isCurrentSet) {
         // Active set: yellow background, black text
@@ -167,7 +179,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
       
       columns.push({
         key: i,
-        content: hasStarted ? (
+        content: (hasStarted || isCurrentSet) ? (
           <>
             <div className={setClass} style={setStyle}>
               {formatSetScore(sets[i]?.player2Games || 0, false)}
