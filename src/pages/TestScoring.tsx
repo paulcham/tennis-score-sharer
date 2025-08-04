@@ -25,11 +25,8 @@ const TestScoring: React.FC = () => {
       <div className="w-full">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4">
-            Tennis Scoring Test
+            MatchSync
           </h1>
-          <p className="text-xl text-muted-foreground">
-            Test the tennis scoring logic
-          </p>
         </div>
 
         {/* Scoreboard at top */}

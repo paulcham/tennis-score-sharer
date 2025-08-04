@@ -45,7 +45,9 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     if (isTieBreak) {
       const newTieBreakScore = addPointToTieBreak(tieBreakScore, scoringPlayer, config);
       console.log('Tiebreak point scored:', scoringPlayer);
+      console.log('Current tiebreak score:', tieBreakScore);
       console.log('New tiebreak score:', newTieBreakScore);
+      console.log('Server changed from', tieBreakScore.server, 'to', newTieBreakScore.server);
       
       setTieBreakScore(newTieBreakScore);
       
@@ -65,14 +67,15 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         
         setGameHistory([...gameHistory, tiebreakHistoryEntry]);
         
-        // Update set score to 7-6 (tiebreak winner wins the set)
+        // Update set score based on set duration (tiebreak winner wins the set)
         const updatedSets = [...sets];
+        const setDuration = config.setDuration;
         if (scoringPlayer === 'player1') {
-          updatedSets[currentSetIndex].player1Games = 7;
-          updatedSets[currentSetIndex].player2Games = 6;
+          updatedSets[currentSetIndex].player1Games = setDuration;
+          updatedSets[currentSetIndex].player2Games = setDuration - 1;
         } else {
-          updatedSets[currentSetIndex].player1Games = 6;
-          updatedSets[currentSetIndex].player2Games = 7;
+          updatedSets[currentSetIndex].player1Games = setDuration - 1;
+          updatedSets[currentSetIndex].player2Games = setDuration;
         }
         updatedSets[currentSetIndex].isComplete = true;
         updatedSets[currentSetIndex].winner = scoringPlayer;
@@ -257,10 +260,9 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
       return;
     }
 
-    // Handle tiebreak point removal
+    // For tiebreak, we can't easily remove points since it's just incrementing numbers
+    // We'll need to implement a more sophisticated undo system
     if (isTieBreak) {
-      // For tiebreak, we can't easily remove points since it's just incrementing numbers
-      // We'll need to implement a more sophisticated undo system
       console.log('Tiebreak point removal not implemented yet');
       return;
     }
@@ -271,6 +273,24 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     console.log('Removing point for player:', scoringPlayer);
     
     setGameScore(newGameScore);
+  };
+
+  const handleSetServer = (player: Player) => {
+    console.log('Setting server to:', player);
+    
+    if (isTieBreak) {
+      // Update tiebreak server
+      setTieBreakScore(prev => ({
+        ...prev,
+        server: player
+      }));
+    } else {
+      // Update game server
+      setGameScore(prev => ({
+        ...prev,
+        server: player
+      }));
+    }
   };
 
   // Check if the game was won by the scoring player
@@ -309,6 +329,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         onRemovePoint={handleRemovePoint}
         isTieBreak={isTieBreak}
         tieBreakScore={tieBreakScore}
+        onSetServer={handleSetServer}
       />
 
       {/* Game History */}
