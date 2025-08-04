@@ -18,6 +18,7 @@ interface ScoreboardProps {
   isMatchComplete?: boolean;
   matchWinner?: Player | null;
   finalScoreline?: string;
+  isReadOnly?: boolean;
 }
 
 const Scoreboard: React.FC<ScoreboardProps> = ({ 
@@ -32,7 +33,8 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
   tieBreakScore,
   isMatchComplete,
   matchWinner,
-  finalScoreline
+  finalScoreline,
+  isReadOnly = false
 }) => {
   const formatPoint = (point: number | string, opponentPoint?: number | string): string => {
     if (point === 0) {
@@ -296,58 +298,67 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
               }}
             >
               {/* Scoring Buttons Column for Player 1 */}
-              <div className="p-4 border-r bg-gray-800" style={{ borderColor: TENNIS_COLORS.WHITE }}>
-                <div className="flex flex-col items-center gap-2">
-                  <div className="flex items-center justify-center gap-2">
+              {!isReadOnly && (
+                <div className="p-4 border-r bg-gray-800" style={{ borderColor: TENNIS_COLORS.WHITE }}>
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="flex items-center justify-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className={`aspect-square h-10 w-10 p-0 text-lg text-white ${
+                          currentSetComplete 
+                            ? 'bg-gray-600 border-gray-500 cursor-not-allowed' 
+                            : 'hover:bg-opacity-80'
+                        }`}
+                        style={{
+                          backgroundColor: currentSetComplete ? '#666' : TENNIS_COLORS.GREEN,
+                          borderColor: currentSetComplete ? '#666' : TENNIS_COLORS.GREEN
+                        }}
+                        onClick={() => onAddPoint('player1')}
+                        disabled={currentSetComplete}
+                      >
+                        +
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className={`aspect-square h-10 w-10 p-0 text-xs text-white ${
+                          currentSetComplete 
+                            ? 'bg-gray-600 border-gray-500 cursor-not-allowed' 
+                            : 'hover:bg-opacity-80'
+                        }`}
+                        style={{
+                          backgroundColor: currentSetComplete ? '#666' : '#666',
+                          borderColor: currentSetComplete ? '#666' : '#666'
+                        }}
+                        onClick={() => onRemovePoint('player1')}
+                        disabled={currentSetComplete}
+                      >
+                        −
+                      </Button>
+                    </div>
                     <Button
                       size="sm"
                       variant="outline"
-                      className={`aspect-square h-10 w-10 p-0 text-lg text-white ${
-                        currentSetComplete 
-                          ? 'bg-gray-600 border-gray-500 cursor-not-allowed' 
-                          : 'hover:bg-opacity-80'
-                      }`}
+                      className="h-6 px-2 text-xs text-white hover:bg-opacity-80"
                       style={{
-                        backgroundColor: currentSetComplete ? '#666' : TENNIS_COLORS.GREEN,
-                        borderColor: currentSetComplete ? '#666' : TENNIS_COLORS.GREEN
+                        backgroundColor: TENNIS_COLORS.BLUE,
+                        borderColor: TENNIS_COLORS.BLUE
                       }}
-                      onClick={() => onAddPoint('player1')}
-                      disabled={currentSetComplete}
+                      onClick={() => onSetServer('player1')}
                     >
-                      +
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className={`aspect-square h-10 w-10 p-0 text-xs text-white ${
-                        currentSetComplete 
-                          ? 'bg-gray-600 border-gray-500 cursor-not-allowed' 
-                          : 'hover:bg-opacity-80'
-                      }`}
-                      style={{
-                        backgroundColor: currentSetComplete ? '#666' : '#666',
-                        borderColor: currentSetComplete ? '#666' : '#666'
-                      }}
-                      onClick={() => onRemovePoint('player1')}
-                      disabled={currentSetComplete}
-                    >
-                      −
+                      Make Server
                     </Button>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-6 px-2 text-xs text-white hover:bg-opacity-80"
-                    style={{
-                      backgroundColor: TENNIS_COLORS.BLUE,
-                      borderColor: TENNIS_COLORS.BLUE
-                    }}
-                    onClick={() => onSetServer('player1')}
-                  >
-                    Make Server
-                  </Button>
                 </div>
-              </div>
+              )}
+              
+              {/* Empty space for read-only mode */}
+              {isReadOnly && (
+                <div className="p-4 border-r bg-gray-800" style={{ borderColor: TENNIS_COLORS.WHITE }}>
+                  <div className="w-10 h-10"></div>
+                </div>
+              )}
 
               {/* Player 1 Column */}
               <div className="p-4 border-r bg-gray-800 flex items-center" style={{ borderColor: TENNIS_COLORS.WHITE }}>
@@ -390,58 +401,67 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
               }}
             >
                               {/* Scoring Buttons Column for Player 2 */}
+              {!isReadOnly && (
                 <div className="p-4 border-r bg-gray-800" style={{ borderColor: TENNIS_COLORS.WHITE }}>
-                <div className="flex flex-col items-center gap-2">
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="flex items-center justify-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className={`aspect-square h-10 w-10 p-0 text-lg text-white ${
+                          currentSetComplete 
+                            ? 'bg-gray-600 border-gray-500 cursor-not-allowed' 
+                            : 'hover:bg-opacity-80'
+                        }`}
+                        style={{
+                          backgroundColor: currentSetComplete ? '#666' : TENNIS_COLORS.GREEN,
+                          borderColor: currentSetComplete ? '#666' : TENNIS_COLORS.GREEN
+                        }}
+                        onClick={() => onAddPoint('player2')}
+                        disabled={currentSetComplete}
+                      >
+                        +
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className={`aspect-square h-10 w-10 p-0 text-xs text-white ${
+                          currentSetComplete 
+                            ? 'bg-gray-600 border-gray-500 cursor-not-allowed' 
+                            : 'hover:bg-opacity-80'
+                        }`}
+                        style={{
+                          backgroundColor: currentSetComplete ? '#666' : '#666',
+                          borderColor: currentSetComplete ? '#666' : '#666'
+                        }}
+                        onClick={() => onRemovePoint('player2')}
+                        disabled={currentSetComplete}
+                      >
+                        −
+                      </Button>
+                    </div>
                     <Button
                       size="sm"
                       variant="outline"
-                      className={`aspect-square h-10 w-10 p-0 text-lg text-white ${
-                        currentSetComplete 
-                          ? 'bg-gray-600 border-gray-500 cursor-not-allowed' 
-                          : 'hover:bg-opacity-80'
-                      }`}
+                      className="h-6 px-2 text-xs text-white hover:bg-opacity-80"
                       style={{
-                        backgroundColor: currentSetComplete ? '#666' : TENNIS_COLORS.GREEN,
-                        borderColor: currentSetComplete ? '#666' : TENNIS_COLORS.GREEN
+                        backgroundColor: TENNIS_COLORS.BLUE,
+                        borderColor: TENNIS_COLORS.BLUE
                       }}
-                      onClick={() => onAddPoint('player2')}
-                      disabled={currentSetComplete}
+                      onClick={() => onSetServer('player2')}
                     >
-                      +
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className={`aspect-square h-10 w-10 p-0 text-xs text-white ${
-                        currentSetComplete 
-                          ? 'bg-gray-600 border-gray-500 cursor-not-allowed' 
-                          : 'hover:bg-opacity-80'
-                      }`}
-                      style={{
-                        backgroundColor: currentSetComplete ? '#666' : '#666',
-                        borderColor: currentSetComplete ? '#666' : '#666'
-                      }}
-                      onClick={() => onRemovePoint('player2')}
-                      disabled={currentSetComplete}
-                    >
-                      −
+                      Make Server
                     </Button>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-6 px-2 text-xs text-white hover:bg-opacity-80"
-                    style={{
-                      backgroundColor: TENNIS_COLORS.BLUE,
-                      borderColor: TENNIS_COLORS.BLUE
-                    }}
-                    onClick={() => onSetServer('player2')}
-                  >
-                    Make Server
-                  </Button>
                 </div>
-              </div>
+              )}
+              
+              {/* Empty space for read-only mode */}
+              {isReadOnly && (
+                <div className="p-4 border-r bg-gray-800" style={{ borderColor: TENNIS_COLORS.WHITE }}>
+                  <div className="w-10 h-10"></div>
+                </div>
+              )}
 
                               {/* Player 2 Column */}
                 <div className="p-4 border-r bg-gray-800 flex items-center" style={{ borderColor: TENNIS_COLORS.WHITE }}>

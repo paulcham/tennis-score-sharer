@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { GameScore, MatchConfig, Player, SetScore, TieBreakScore } from '../../types/Scoring';
+import { GameScore, MatchConfig, Player, SetScore, TieBreakScore, Match } from '../../types/Scoring';
 import { addPointToGame, removePointFromGame, isSetWon, isTieBreakNeeded, addPointToTieBreak } from '../../utils/scoring';
 import Scoreboard from './Scoreboard';
+import { MatchAPI } from '../../services/api';
 
 interface GameScorerProps {
   config: MatchConfig;
+  matchId?: string; // Optional: if provided, load existing match
+  adminToken?: string; // Optional: for updating existing matches
+  isReadOnly?: boolean; // Optional: if true, disable all interactions
 }
 
-const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
+const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, isReadOnly = false }) => {
   const [gameScore, setGameScore] = useState<GameScore>({
     player1Points: 0,
     player2Points: 0,
@@ -20,7 +24,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
   ]);
 
   const [currentSet, setCurrentSet] = useState(1);
-  const [gameHistory, setGameHistory] = useState<any[]>([]); // Changed type to any[] to accommodate new structure
+  const [gameHistory, setGameHistory] = useState<any[]>([]);
   const [gameNumber, setGameNumber] = useState(1);
   
   // Tiebreak state
@@ -37,7 +41,95 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
   const [matchWinner, setMatchWinner] = useState<Player | null>(null);
   const [finalScoreline, setFinalScoreline] = useState<string>('');
 
+  // Match persistence state
+  const [currentMatchId, setCurrentMatchId] = useState<string | null>(matchId || null);
+  const [currentAdminToken, setCurrentAdminToken] = useState<string | null>(adminToken || null);
+  const [shareUrl, setShareUrl] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>('');
+
+  // Load existing match if matchId is provided
+  useEffect(() => {
+    if (matchId) {
+      loadExistingMatch(matchId);
+    } else {
+      // Create new match
+      createNewMatch();
+    }
+  }, [matchId]);
+
+  const loadExistingMatch = async (id: string) => {
+    try {
+      setIsLoading(true);
+      setError('');
+      const result = await MatchAPI.getMatch(id);
+      const match = result.match;
+      
+      // Load match state
+      setGameScore(match.currentGameScore);
+      setSets(match.sets);
+      setCurrentSet(match.currentSet);
+      setGameHistory(match.gameHistory || []);
+      setGameNumber(match.gameNumber || 1);
+      setIsTieBreak(match.isTieBreak || false);
+      setTieBreakScore(match.tieBreakScore || {
+        player1Points: 0,
+        player2Points: 0,
+        isComplete: false,
+        server: 'player1'
+      });
+      setIsMatchComplete(match.status === 'completed');
+      setMatchWinner(match.matchWinner || null);
+      setFinalScoreline(match.finalScoreline || '');
+      setShareUrl(match.shareUrl);
+      setCurrentMatchId(id);
+      setCurrentAdminToken(match.adminToken || null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load match');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const createNewMatch = async () => {
+    try {
+      setIsLoading(true);
+      setError('');
+      const result = await MatchAPI.createMatch(config);
+      const match = result.match;
+      
+      console.log('Created match:', { id: match.id, adminToken: match.adminToken });
+      
+      setCurrentMatchId(match.id);
+      setCurrentAdminToken(match.adminToken || null);
+      setShareUrl(match.shareUrl);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create match');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateMatch = async (updates: Partial<Match>) => {
+    if (isReadOnly) return; // Don't update in read-only mode
+    
+    if (!currentMatchId || !currentAdminToken) {
+      console.log('Missing credentials:', { currentMatchId, currentAdminToken });
+      return;
+    }
+    
+    try {
+      console.log('Updating match:', { currentMatchId, currentAdminToken, updates });
+      await MatchAPI.updateMatch(currentMatchId, currentAdminToken, updates);
+    } catch (err) {
+      console.error('Update match error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to update match');
+    }
+  };
+
   const handlePoint = (scoringPlayer: Player) => {
+    if (isReadOnly) return; // Don't allow scoring in read-only mode
+    
     // Check if current set is already complete - if so, don't allow scoring
     const currentSetIndex = currentSet - 1;
     const currentSetData = sets[currentSetIndex];
@@ -86,15 +178,6 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
           player2Points: newTieBreakScore.player2Points
         };
         
-        // Add set win history entry to the updated game history
-        const setWinHistoryEntry = {
-          set: currentSet,
-          type: 'set-win',
-          winner: scoringPlayer,
-          setNumber: currentSet
-        };
-        setGameHistory([...updatedGameHistory, setWinHistoryEntry]);
-        
         // Check if match is complete
         const completedSets = updatedSets.filter(set => set.isComplete);
         const player1Sets = completedSets.filter(set => set.winner === 'player1').length;
@@ -124,7 +207,18 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
             winner: matchWinner,
             finalScoreline: finalScoreline
           };
-          setGameHistory([...updatedGameHistory, setWinHistoryEntry, matchCompletionEntry]);
+          setGameHistory([...updatedGameHistory, matchCompletionEntry]);
+          
+          // Update match in backend
+          updateMatch({
+            status: 'completed',
+            sets: updatedSets,
+            isTieBreak: false,
+            tieBreakScore: newTieBreakScore,
+            gameHistory: [...updatedGameHistory, matchCompletionEntry],
+            matchWinner,
+            finalScoreline
+          });
         } else {
           // Start next set
           const nextSet = currentSet + 1;
@@ -132,6 +226,15 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
           if (!updatedSets[nextSet - 1]) {
             updatedSets[nextSet - 1] = { player1Games: 0, player2Games: 0, isComplete: false };
           }
+          
+          // Update match in backend
+          updateMatch({
+            sets: updatedSets,
+            currentSet: nextSet,
+            isTieBreak: false,
+            tieBreakScore: newTieBreakScore,
+            gameHistory: [...updatedGameHistory]
+          });
         }
         
         setSets(updatedSets);
@@ -150,6 +253,12 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
           player1Points: 0,
           player2Points: 0,
           server: newTieBreakScore.server === 'player1' ? 'player2' : 'player1'
+        });
+      } else {
+        // Update match in backend with tiebreak progress
+        updateMatch({
+          isTieBreak: true,
+          tieBreakScore: newTieBreakScore
         });
       }
       return;
@@ -205,6 +314,20 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         });
         setSets(updatedSets);
         
+        // Update match in backend
+        updateMatch({
+          sets: updatedSets,
+          gameNumber: gameNumber + 1,
+          isTieBreak: true,
+          tieBreakScore: {
+            player1Points: 0,
+            player2Points: 0,
+            isComplete: false,
+            server: newGameScore.server === 'player1' ? 'player2' : 'player1'
+          },
+          gameHistory: updatedGameHistory
+        });
+        
         // Reset for tiebreak (no game score in tiebreak)
         setGameScore({
           player1Points: 0,
@@ -258,7 +381,17 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
             winner: matchWinner,
             finalScoreline: finalScoreline
           };
-          setGameHistory([...updatedGameHistory, setWinHistoryEntry, matchCompletionEntry]);
+          setGameHistory([...updatedGameHistory, matchCompletionEntry]);
+          
+          // Update match in backend
+          updateMatch({
+            status: 'completed',
+            sets: updatedSets,
+            gameNumber: gameNumber + 1,
+            gameHistory: [...updatedGameHistory, matchCompletionEntry],
+            matchWinner,
+            finalScoreline
+          });
         } else {
           // Start next set immediately
           const nextSet = currentSet + 1;
@@ -267,10 +400,25 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
           if (!updatedSets[nextSet - 1]) {
             updatedSets[nextSet - 1] = { player1Games: 0, player2Games: 0, isComplete: false };
           }
+          
+          // Update match in backend
+          updateMatch({
+            sets: updatedSets,
+            currentSet: nextSet,
+            gameNumber: 1,
+            gameHistory: [...updatedGameHistory]
+          });
         }
       }
       
       setSets(updatedSets);
+      
+      // Update match in backend
+      updateMatch({
+        sets: updatedSets,
+        gameNumber: gameNumber + 1,
+        gameHistory: updatedGameHistory
+      });
       
       // Reset for next game
       setGameScore({
@@ -278,10 +426,17 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
         player2Points: 0,
         server: newGameScore.server === 'player1' ? 'player2' : 'player1'
       });
+    } else {
+      // Update match in backend with current game score
+      updateMatch({
+        currentGameScore: newGameScore
+      });
     }
   };
 
   const handleRemovePoint = (scoringPlayer: Player) => {
+    if (isReadOnly) return; // Don't allow undo in read-only mode
+    
     // Check if current set is already complete - if so, don't allow scoring
     const currentSetIndex = currentSet - 1;
     const currentSetData = sets[currentSetIndex];
@@ -298,23 +453,27 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
     const newGameScore = removePointFromGame(gameScore, scoringPlayer, config);
     
     setGameScore(newGameScore);
+    
+    // Update match in backend
+    updateMatch({
+      currentGameScore: newGameScore
+    });
   };
 
   const handleSetServer = (player: Player) => {
+    if (isReadOnly) return; // Don't allow server changes in read-only mode
     
     if (isTieBreak) {
-      // Update tiebreak server
-      setTieBreakScore(prev => ({
-        ...prev,
-        server: player
-      }));
+      setTieBreakScore(prev => prev ? { ...prev, server: player } : prev);
     } else {
-      // Update game server
-      setGameScore(prev => ({
-        ...prev,
-        server: player
-      }));
+      setGameScore(prev => ({ ...prev, server: player }));
     }
+    
+    // Update match with new server
+    updateMatch({
+      currentGameScore: isTieBreak ? gameScore : { ...gameScore, server: player },
+      tieBreakScore: isTieBreak ? (tieBreakScore ? { ...tieBreakScore, server: player } : tieBreakScore) : tieBreakScore
+    });
   };
 
   // Check if the game was won by the scoring player
@@ -361,8 +520,63 @@ const GameScorer: React.FC<GameScorerProps> = ({ config }) => {
       .join(', ');
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white">Loading match...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-center">
+          <p className="text-red-400 mb-4">Error: {error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 w-full">
+      {/* Share URL Display */}
+      {shareUrl && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-white">Share Match</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={shareUrl}
+                readOnly
+                className="flex-1 p-2 bg-gray-700 text-white border border-gray-600 rounded"
+              />
+              <button
+                onClick={() => navigator.clipboard.writeText(shareUrl)}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Copy
+              </button>
+            </div>
+            <p className="text-sm text-gray-400 mt-2">
+              Share this URL with others to let them view the match in real-time
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Scoreboard at top */}
       <Scoreboard 
         config={config}

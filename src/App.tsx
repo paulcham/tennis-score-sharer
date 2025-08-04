@@ -1,18 +1,26 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import NewMatch from './pages/NewMatch';
+import ScoreMatch from './pages/ScoreMatch';
+import ViewMatch from './pages/ViewMatch';
 import TestScoring from './pages/TestScoring';
 import TestAPI from './pages/TestAPI';
-import Navigation from './components/Navigation';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<'scoring' | 'api-test'>('scoring');
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation currentPage={currentPage} onPageChange={setCurrentPage} />
-      
-      {currentPage === 'scoring' && <TestScoring />}
-      {currentPage === 'api-test' && <TestAPI />}
-    </div>
+    <Router>
+      <div className="min-h-screen bg-gray-50">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/new-match" element={<NewMatch />} />
+          <Route path="/score-match" element={<ScoreMatch />} />
+          <Route path="/view/:matchId" element={<ViewMatch />} />
+          <Route path="/test-scoring" element={<TestScoring />} />
+          <Route path="/test-api" element={<TestAPI />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

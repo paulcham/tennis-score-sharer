@@ -27,6 +27,7 @@ export const handler: Handler = async (event) => {
 
     // Verify admin token
     const isAuthorized = await MatchStorage.verifyAdminToken(matchId, adminToken);
+    console.log('Auth check:', { matchId, adminToken, isAuthorized });
     if (!isAuthorized) {
       return {
         statusCode: 403,

@@ -45,10 +45,14 @@ export interface Match {
   status: 'in-progress' | 'completed' | 'paused';
   currentSet: number;
   currentGame: number;
+  gameNumber: number;
   sets: SetScore[];
   currentGameScore: GameScore;
   isTieBreak: boolean;
   tieBreakScore?: TieBreakScore;
+  gameHistory: any[];
+  matchWinner?: Player;
+  finalScoreline?: string;
   createdAt: Date;
   updatedAt: Date;
   shareUrl: string;

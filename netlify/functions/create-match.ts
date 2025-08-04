@@ -37,6 +37,7 @@ export const handler: Handler = async (event) => {
       status: 'in-progress',
       currentSet: 1,
       currentGame: 1,
+      gameNumber: 1,
       sets: [{ player1Games: 0, player2Games: 0, isComplete: false }],
       currentGameScore: {
         player1Points: 0,
@@ -45,6 +46,9 @@ export const handler: Handler = async (event) => {
       },
       isTieBreak: false,
       tieBreakScore: undefined,
+      gameHistory: [],
+      matchWinner: undefined,
+      finalScoreline: undefined,
       createdAt: new Date(),
       updatedAt: new Date(),
       shareUrl,
