@@ -1,4 +1,5 @@
 import React from 'react';
+import { TENNIS_COLORS } from '../lib/colors';
 
 interface NavigationProps {
   currentPage: 'scoring' | 'api-test';
@@ -14,9 +15,13 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage, onPageChange }) =>
             onClick={() => onPageChange('scoring')}
             className={`font-medium ${
               currentPage === 'scoring' 
-                ? 'text-blue-800 border-b-2 border-blue-800' 
-                : 'text-blue-600 hover:text-blue-800'
+                ? 'border-b-2' 
+                : 'hover:opacity-80'
             }`}
+            style={{ 
+              color: currentPage === 'scoring' ? TENNIS_COLORS.INFO_BLUE : TENNIS_COLORS.INFO_BLUE,
+              borderColor: currentPage === 'scoring' ? TENNIS_COLORS.INFO_BLUE : 'transparent'
+            }}
           >
             Scoring Test
           </button>
@@ -24,9 +29,13 @@ const Navigation: React.FC<NavigationProps> = ({ currentPage, onPageChange }) =>
             onClick={() => onPageChange('api-test')}
             className={`font-medium ${
               currentPage === 'api-test' 
-                ? 'text-blue-800 border-b-2 border-blue-800' 
-                : 'text-blue-600 hover:text-blue-800'
+                ? 'border-b-2' 
+                : 'hover:opacity-80'
             }`}
+            style={{ 
+              color: currentPage === 'api-test' ? TENNIS_COLORS.INFO_BLUE : TENNIS_COLORS.INFO_BLUE,
+              borderColor: currentPage === 'api-test' ? TENNIS_COLORS.INFO_BLUE : 'transparent'
+            }}
           >
             API Test
           </button>

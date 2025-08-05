@@ -39,7 +39,7 @@ const ScoreMatch: React.FC = () => {
 
   if (!config && !matchId) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
           <p className="text-white">Loading...</p>
@@ -49,7 +49,7 @@ const ScoreMatch: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black">
       {/* Header */}
       <div className="p-4 border-b border-gray-700">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
@@ -57,7 +57,7 @@ const ScoreMatch: React.FC = () => {
             <Button 
               variant="ghost" 
               onClick={() => navigate('/')}
-              className="text-white"
+              className="text-white hover:bg-gray-800"
             >
               ← Back to Home
             </Button>
@@ -65,7 +65,7 @@ const ScoreMatch: React.FC = () => {
           <div className="text-center">
             <h1 className="text-xl font-bold text-white">Tennis Match Scoring</h1>
             {config && (
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-300">
                 {config.player1Name} vs {config.player2Name}
               </p>
             )}

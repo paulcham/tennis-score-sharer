@@ -237,7 +237,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
 
             {/* Match Completion Announcement */}
             {isMatchComplete && matchWinner && finalScoreline && (
-              <div className="bg-green-600 px-6 py-4 border-b border-green-700">
+              <div className="px-6 py-4 border-b" style={{ backgroundColor: TENNIS_COLORS.GREEN, borderColor: TENNIS_COLORS.GREEN }}>
                 <div className="text-center">
                   <h3 className="text-lg font-bold text-white mb-1">
                     🏆 MATCH COMPLETE! 🏆

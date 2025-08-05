@@ -5,6 +5,7 @@ import { Match } from '../types/Scoring';
 import Scoreboard from '../components/scoring/Scoreboard';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { useMatchUpdates } from '../hooks/useMatchUpdates';
+import { TENNIS_COLORS } from '../lib/colors';
 
 const ViewMatch: React.FC = () => {
   const { matchId } = useParams<{ matchId: string }>();
@@ -46,7 +47,7 @@ const ViewMatch: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-white text-lg">Loading match...</div>
       </div>
     );
@@ -54,13 +55,13 @@ const ViewMatch: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <Card>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Card className="bg-gray-900 border-gray-700">
           <CardHeader>
-            <CardTitle className="text-red-600">Error Loading Match</CardTitle>
+            <CardTitle style={{ color: TENNIS_COLORS.ERROR_RED }}>Error Loading Match</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-700">{error}</p>
+            <p className="text-gray-300">{error}</p>
           </CardContent>
         </Card>
       </div>
@@ -69,13 +70,13 @@ const ViewMatch: React.FC = () => {
 
   if (!match) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <Card>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Card className="bg-gray-900 border-gray-700">
           <CardHeader>
-            <CardTitle className="text-red-600">Match Not Found</CardTitle>
+            <CardTitle style={{ color: TENNIS_COLORS.ERROR_RED }}>Match Not Found</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-700">The requested match could not be found.</p>
+            <p className="text-gray-300">The requested match could not be found.</p>
           </CardContent>
         </Card>
       </div>
@@ -83,7 +84,7 @@ const ViewMatch: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-4">
+    <div className="min-h-screen bg-black p-4">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-white mb-2">
@@ -95,8 +96,8 @@ const ViewMatch: React.FC = () => {
             </p>
             {isConnected && (
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm text-green-400">
+                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: TENNIS_COLORS.SUCCESS_GREEN }}></div>
+                <span className="text-sm" style={{ color: TENNIS_COLORS.SUCCESS_GREEN }}>
                   Live Updates
                   {lastUpdate && (
                     <span className="text-xs text-gray-500 ml-2">
@@ -108,11 +109,12 @@ const ViewMatch: React.FC = () => {
             )}
             {sseError && (
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                <span className="text-sm text-red-400">{sseError}</span>
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: TENNIS_COLORS.ERROR_RED }}></div>
+                <span className="text-sm" style={{ color: TENNIS_COLORS.ERROR_RED }}>{sseError}</span>
                 <button 
                   onClick={reconnect}
-                  className="text-xs px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  className="text-xs px-2 py-1 text-white rounded"
+                  style={{ backgroundColor: TENNIS_COLORS.INFO_BLUE }}
                 >
                   Retry
                 </button>

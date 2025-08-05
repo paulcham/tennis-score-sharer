@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { MatchAPI } from '../services/api';
 import { MatchConfig } from '../types/Scoring';
+import { TENNIS_COLORS } from '../lib/colors';
 
 const TestAPI: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -73,7 +74,7 @@ const TestAPI: React.FC = () => {
               <Button 
                 onClick={testCreateMatch} 
                 disabled={loading}
-                className="bg-green-600 hover:bg-green-700"
+                style={{ backgroundColor: TENNIS_COLORS.SUCCESS_GREEN }}
               >
                 {loading ? 'Creating...' : 'Test Create Match'}
               </Button>
@@ -81,7 +82,7 @@ const TestAPI: React.FC = () => {
               <Button 
                 onClick={testGetMatch} 
                 disabled={loading}
-                className="bg-blue-600 hover:bg-blue-700"
+                style={{ backgroundColor: TENNIS_COLORS.INFO_BLUE }}
               >
                 {loading ? 'Testing...' : 'Test Get Match'}
               </Button>

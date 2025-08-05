@@ -4,6 +4,7 @@ import { GameScore, MatchConfig, Player, SetScore, TieBreakScore, Match } from '
 import { addPointToGame, removePointFromGame, isSetWon, isTieBreakNeeded, addPointToTieBreak } from '../../utils/scoring';
 import Scoreboard from './Scoreboard';
 import { MatchAPI } from '../../services/api';
+import { TENNIS_COLORS } from '../../lib/colors';
 
 interface GameScorerProps {
   config: MatchConfig;
@@ -535,10 +536,11 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-center">
-          <p className="text-red-400 mb-4">Error: {error}</p>
+          <p className="mb-4" style={{ color: TENNIS_COLORS.ERROR_RED }}>Error: {error}</p>
           <button 
             onClick={() => window.location.reload()} 
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 text-white rounded"
+            style={{ backgroundColor: TENNIS_COLORS.INFO_BLUE }}
           >
             Retry
           </button>
@@ -551,7 +553,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
     <div className="space-y-6 w-full">
       {/* Share URL Display */}
       {shareUrl && (
-        <Card>
+        <Card className="bg-gray-900 border-gray-700">
           <CardHeader>
             <CardTitle className="text-white">Share Match</CardTitle>
           </CardHeader>
@@ -565,12 +567,13 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
               />
               <button
                 onClick={() => navigator.clipboard.writeText(shareUrl)}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="px-4 py-2 text-white rounded"
+                style={{ backgroundColor: TENNIS_COLORS.INFO_BLUE }}
               >
                 Copy
               </button>
             </div>
-            <p className="text-sm text-gray-400 mt-2">
+            <p className="text-sm text-gray-300 mt-2">
               Share this URL with others to let them view the match in real-time
             </p>
           </CardContent>
@@ -595,9 +598,9 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
 
       {/* Game History */}
       {gameHistory.length > 0 && !isTieBreak && (
-        <Card>
+        <Card className="bg-gray-900 border-gray-700">
           <CardHeader>
-            <CardTitle>Game History</CardTitle>
+            <CardTitle className="text-white">Game History</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -607,14 +610,14 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
                   const winnerName = entry.winner === 'player1' ? config.player1Name : config.player2Name;
                   
                   return (
-                    <div key={index} className="p-3 bg-blue-50 border border-blue-200">
-                      <div className="text-sm font-medium text-blue-800 mb-1">
+                    <div key={index} className="p-3 border rounded" style={{ backgroundColor: TENNIS_COLORS.LIGHT_BLUE, borderColor: TENNIS_COLORS.INFO_BLUE }}>
+                      <div className="text-sm font-medium mb-1" style={{ color: TENNIS_COLORS.INFO_BLUE }}>
                         🏆 MATCH COMPLETE! 🏆
                       </div>
-                      <div className="text-sm font-medium text-blue-800">
+                      <div className="text-sm font-medium" style={{ color: TENNIS_COLORS.INFO_BLUE }}>
                         Winner: {winnerName}
                       </div>
-                      <div className="text-sm font-medium text-blue-800">
+                      <div className="text-sm font-medium" style={{ color: TENNIS_COLORS.INFO_BLUE }}>
                         Final Score: {entry.finalScoreline}
                       </div>
                     </div>
@@ -624,8 +627,8 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
                   const winnerName = entry.winner === 'player1' ? config.player1Name : config.player2Name;
                   
                   return (
-                    <div key={index} className="p-3 bg-green-50 border border-green-200">
-                      <div className="text-sm font-medium text-green-800">
+                    <div key={index} className="p-3 border rounded" style={{ backgroundColor: TENNIS_COLORS.LIGHT_GREEN, borderColor: TENNIS_COLORS.SUCCESS_GREEN }}>
+                      <div className="text-sm font-medium" style={{ color: TENNIS_COLORS.SUCCESS_GREEN }}>
                         {winnerName} wins Set {entry.setNumber}.
                       </div>
                     </div>

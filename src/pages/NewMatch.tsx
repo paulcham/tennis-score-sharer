@@ -51,14 +51,14 @@ const NewMatch: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div className="min-h-screen bg-black p-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-6">
           <Button 
             variant="ghost" 
             onClick={() => navigate('/')}
-            className="mb-4"
+            className="mb-4 text-white hover:bg-gray-800"
           >
             ← Back to Home
           </Button>
@@ -66,10 +66,10 @@ const NewMatch: React.FC = () => {
           <p className="text-gray-300">Configure your tennis match settings</p>
         </div>
 
-        <Card>
+        <Card className="bg-gray-900 border-gray-700">
           <CardHeader>
-            <CardTitle>Match Configuration</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-white">Match Configuration</CardTitle>
+            <CardDescription className="text-gray-300">
               Set up the scoring rules and player names for your match
             </CardDescription>
           </CardHeader>
@@ -176,9 +176,9 @@ const NewMatch: React.FC = () => {
         </Card>
 
         {/* Rules Explanation */}
-        <Card className="mt-6">
+        <Card className="mt-6 bg-gray-900 border-gray-700">
           <CardHeader>
-            <CardTitle>Scoring Rules</CardTitle>
+            <CardTitle className="text-white">Scoring Rules</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3 text-sm">
