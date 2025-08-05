@@ -161,15 +161,13 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
         const updatedGameHistory = [...gameHistory, tiebreakHistoryEntry];
         setGameHistory(updatedGameHistory);
         
-        // Update set score based on set duration (tiebreak winner wins the set)
+        // Update set score - tiebreak winner gets +1 game to their score
         const updatedSets = [...sets];
-        const setDuration = config.setDuration;
+        const currentSetData = updatedSets[currentSetIndex];
         if (scoringPlayer === 'player1') {
-          updatedSets[currentSetIndex].player1Games = setDuration;
-          updatedSets[currentSetIndex].player2Games = setDuration - 1;
+          updatedSets[currentSetIndex].player1Games = currentSetData.player1Games + 1;
         } else {
-          updatedSets[currentSetIndex].player1Games = setDuration - 1;
-          updatedSets[currentSetIndex].player2Games = setDuration;
+          updatedSets[currentSetIndex].player2Games = currentSetData.player2Games + 1;
         }
         updatedSets[currentSetIndex].isComplete = true;
         updatedSets[currentSetIndex].winner = scoringPlayer;
