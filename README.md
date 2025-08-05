@@ -66,7 +66,14 @@ npm start
 npx netlify dev
 ```
 
-The application will be available at `http://localhost:3000`
+The application will be available at `http://localhost:3030`
+
+### Development Ports
+
+- **React App**: `http://localhost:3030` (changed from 3000)
+- **Netlify Functions**: `http://localhost:8898` (changed from 8888)
+
+These ports are configured to prevent conflicts with other local applications.
 
 ## How to Use
 
@@ -85,6 +92,12 @@ The application will be available at `http://localhost:3000`
 3. **Share the Match**
    - Copy the shareable URL that appears at the top
    - Send it to friends and family to let them follow along
+
+4. **Return to Match**
+   - If you close the window or refresh, you can return to your match
+   - Use the "Return to Match" option on the home page
+   - Enter your match ID and admin token to continue scoring
+   - The match ID is displayed in the scoring interface header
 
 ### For Match Viewers
 
@@ -174,11 +187,13 @@ netlify/functions/
 1. **Match Creation**: User configures match → API creates match → Returns match ID and admin token
 2. **Real-time Scoring**: Admin updates score → API validates → Database updated → Viewers poll for updates
 3. **Match Viewing**: Public URL accessed → API retrieves match → Real-time scoreboard displayed
+4. **Match Return**: Admin returns to match → URL contains match ID → API loads match configuration
 
 ### Authentication
 - **Admin Access**: Requires admin token for score updates
 - **Public Access**: Read-only access for match viewers
 - **Token Generation**: Unique admin tokens created per match
+- **URL Persistence**: Match ID embedded in scoring URL for easy return
 
 ## Development
 

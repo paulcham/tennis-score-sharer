@@ -1,7 +1,7 @@
 import { Match, MatchConfig } from '../types/Scoring';
 
 const API_BASE = process.env.NODE_ENV === 'development' 
-  ? 'http://localhost:8888/.netlify/functions' 
+  ? 'http://localhost:8898/.netlify/functions' 
   : '/.netlify/functions';
 
 // Debug logging for API calls

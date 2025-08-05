@@ -15,6 +15,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/new-match" element={<NewMatch />} />
           <Route path="/score-match" element={<ScoreMatch />} />
+        <Route path="/score-match/:matchId" element={<ScoreMatch />} />
           <Route path="/view/:matchId" element={<ViewMatch />} />
           <Route path="/test-scoring" element={<TestScoring />} />
           <Route path="/test-api" element={<TestAPI />} />

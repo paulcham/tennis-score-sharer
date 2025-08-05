@@ -35,11 +35,10 @@ const NewMatch: React.FC = () => {
       // Create the match via API service
       const { match } = await MatchAPI.createMatch(config);
       
-      // Navigate to scoring page with match data
-      navigate('/score-match', { 
+      // Navigate to scoring page with match data in URL
+      navigate(`/score-match/${match.id}`, { 
         state: { 
           config,
-          matchId: match.id,
           adminToken: match.adminToken
         } 
       });

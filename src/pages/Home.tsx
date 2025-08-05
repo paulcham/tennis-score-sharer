@@ -24,28 +24,51 @@ const Home: React.FC = () => {
           </p>
         </div>
 
-        {/* Main Action Card */}
-        <Card className="mb-8 bg-gray-900 border-gray-700">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl text-white">Start a New Match</CardTitle>
-            <CardDescription className="text-gray-300">
-              Create a new tennis match and share the live score with others
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-center">
-            <Button 
-              onClick={handleStartNewMatch}
-              size="lg"
-              className="text-white text-lg px-8 py-4"
-              style={{
-                backgroundColor: TENNIS_COLORS.GREEN,
-                borderColor: TENNIS_COLORS.GREEN
-              }}
-            >
-              Start New Match
-            </Button>
-          </CardContent>
-        </Card>
+        {/* Action Cards */}
+        <div className="grid gap-6 mb-8 md:grid-cols-2">
+          {/* Start New Match */}
+          <Card className="bg-gray-900 border-gray-700">
+            <CardHeader className="text-center">
+              <CardTitle className="text-xl text-white">Start a New Match</CardTitle>
+              <CardDescription className="text-gray-300">
+                Create a new tennis match and share the live score with others
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <Button 
+                onClick={handleStartNewMatch}
+                size="lg"
+                className="text-white text-lg px-6 py-3"
+                style={{
+                  backgroundColor: TENNIS_COLORS.GREEN,
+                  borderColor: TENNIS_COLORS.GREEN
+                }}
+              >
+                Start New Match
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Return to Match */}
+          <Card className="bg-gray-900 border-gray-700">
+            <CardHeader className="text-center">
+              <CardTitle className="text-xl text-white">Return to Match</CardTitle>
+              <CardDescription className="text-gray-300">
+                Continue scoring an existing match with your match ID and admin token
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <Button 
+                onClick={() => navigate('/score-match')}
+                size="lg"
+                variant="outline"
+                className="text-white text-lg px-6 py-3 border-gray-600 hover:bg-gray-800"
+              >
+                Return to Match
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Features Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

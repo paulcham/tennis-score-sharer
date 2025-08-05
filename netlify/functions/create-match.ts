@@ -43,7 +43,7 @@ export const handler: Handler = async (event) => {
     const adminToken = generateAdminToken();
     
     // Generate shareable URL
-    const shareUrl = `${process.env.URL || 'http://localhost:8888'}/view/${matchId}`;
+    const shareUrl = `${process.env.URL || 'http://localhost:3030'}/view/${matchId}`;
 
     // Create new match
     const newMatch: Match = {
