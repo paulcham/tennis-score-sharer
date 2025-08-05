@@ -505,6 +505,17 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
                   </span>
                 </div>
               </div>
+              
+              {/* Final Set Tiebreak Info */}
+              {config.finalSetTieBreak && (
+                <div className="mt-4 pt-3 border-t border-gray-700">
+                  <div className="text-center">
+                    <span style={{ color: TENNIS_COLORS.YELLOW }} className="font-semibold">
+                      🎾 Final Set: {config.finalSetTieBreakPoints}-Point Tiebreak Only
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

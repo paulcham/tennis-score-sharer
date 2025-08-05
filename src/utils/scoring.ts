@@ -263,9 +263,23 @@ export function isTieBreakNeeded(setScore: SetScore, config: MatchConfig): boole
 }
 
 // Add point to tie break
-export function addPointToTieBreak(tieBreakScore: TieBreakScore, scoringPlayer: Player, config: MatchConfig): TieBreakScore {
+export function addPointToTieBreak(
+  tieBreakScore: TieBreakScore, 
+  scoringPlayer: Player, 
+  config: MatchConfig,
+  isFinalSetTieBreak: boolean = false,
+  finalSetTieBreakPoints?: number
+): TieBreakScore {
   const { player1Points, player2Points, server } = tieBreakScore;
-  const requiredPoints = config.tieBreakRules === '10-point' ? 10 : 7;
+  
+  // Determine required points based on tiebreak type
+  let requiredPoints: number;
+  if (isFinalSetTieBreak && finalSetTieBreakPoints) {
+    requiredPoints = finalSetTieBreakPoints;
+  } else {
+    requiredPoints = config.tieBreakRules === '10-point' ? 10 : 7;
+  }
+  
   const totalPoints = player1Points + player2Points;
   
   // Determine who should serve next based on tiebreak rules

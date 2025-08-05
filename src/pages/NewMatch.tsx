@@ -159,6 +159,41 @@ const NewMatch: React.FC = () => {
               </p>
             </div>
 
+            {/* Final Set Tiebreak */}
+            {config.matchFormat !== 'single' && (
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="finalSetTieBreak"
+                    checked={config.finalSetTieBreak || false}
+                    onChange={(e) => handleConfigChange('finalSetTieBreak', e.target.checked)}
+                    className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="finalSetTieBreak" className="text-sm font-medium text-white">
+                    Play final set as tiebreaker only
+                  </label>
+                </div>
+                
+                {config.finalSetTieBreak && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-white">Final Set Tiebreak Points</label>
+                    <select
+                      value={config.finalSetTieBreakPoints || 10}
+                      onChange={(e) => handleConfigChange('finalSetTieBreakPoints', parseInt(e.target.value))}
+                      className="w-full p-3 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value={7}>7-Point Tiebreak</option>
+                      <option value={10}>10-Point Tiebreak</option>
+                    </select>
+                    <p className="text-xs text-gray-400 mt-1">
+                      The final set will be decided by a single tiebreak instead of a full set.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Start Button */}
             <Button 
               onClick={handleStartMatch}

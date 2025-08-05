@@ -37,6 +37,8 @@ export interface MatchConfig {
   tieBreakRules: TieBreakRules;
   player1Name: string;
   player2Name: string;
+  finalSetTieBreak?: boolean;
+  finalSetTieBreakPoints?: 7 | 10;
 }
 
 export interface Match {

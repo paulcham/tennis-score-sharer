@@ -142,7 +142,18 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
 
     // Handle tiebreak scoring
     if (isTieBreak) {
-      const newTieBreakScore = addPointToTieBreak(tieBreakScore, scoringPlayer, config);
+      // Check if this is the final set tiebreak
+      const isFinalSet = (config.matchFormat === 'best-of-3' && currentSet === 3) || 
+                        (config.matchFormat === 'best-of-5' && currentSet === 5);
+      const isFinalSetTieBreak = isFinalSet && config.finalSetTieBreak;
+      
+      const newTieBreakScore = addPointToTieBreak(
+        tieBreakScore, 
+        scoringPlayer, 
+        config,
+        isFinalSetTieBreak,
+        config.finalSetTieBreakPoints
+      );
       
       setTieBreakScore(newTieBreakScore);
       
@@ -402,13 +413,43 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
             updatedSets[nextSet - 1] = { player1Games: 0, player2Games: 0, isComplete: false };
           }
           
-          // Update match in backend
-          updateMatch({
-            sets: updatedSets,
-            currentSet: nextSet,
-            gameNumber: 1,
-            gameHistory: [...updatedGameHistory]
-          });
+          // Check if this is the final set and should be played as tiebreaker only
+          const isFinalSet = (config.matchFormat === 'best-of-3' && nextSet === 3) || 
+                            (config.matchFormat === 'best-of-5' && nextSet === 5);
+          
+          if (isFinalSet && config.finalSetTieBreak) {
+            // Start final set as tiebreaker immediately
+            setIsTieBreak(true);
+            setTieBreakScore({
+              player1Points: 0,
+              player2Points: 0,
+              isComplete: false,
+              server: newGameScore.server === 'player1' ? 'player2' : 'player1'
+            });
+            
+            // Update match in backend
+            updateMatch({
+              sets: updatedSets,
+              currentSet: nextSet,
+              gameNumber: 1,
+              isTieBreak: true,
+              tieBreakScore: {
+                player1Points: 0,
+                player2Points: 0,
+                isComplete: false,
+                server: newGameScore.server === 'player1' ? 'player2' : 'player1'
+              },
+              gameHistory: [...updatedGameHistory]
+            });
+          } else {
+            // Update match in backend
+            updateMatch({
+              sets: updatedSets,
+              currentSet: nextSet,
+              gameNumber: 1,
+              gameHistory: [...updatedGameHistory]
+            });
+          }
         }
       }
       

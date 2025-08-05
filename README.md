@@ -131,6 +131,12 @@ These ports are configured to prevent conflicts with other local applications.
 - **Best of 3**: First to win 2 sets
 - **Best of 5**: First to win 3 sets
 
+### Final Set Tiebreak
+- **Optional**: For multi-set matches, the final set can be played as a tiebreak only
+- **7-Point**: Final set decided by first to 7 points (win by 2)
+- **10-Point**: Final set decided by first to 10 points (win by 2)
+- **Common Use**: Used in recreational tennis and some tournament formats
+
 ### Set Duration
 - **4 Games**: Short sets (recreational)
 - **6 Games**: Standard tennis
