@@ -498,7 +498,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
                   </span>
                 </div>
                 <div>
-                  <span style={{ color: TENNIS_COLORS.WHITE }}>Tie-Break:</span>
+                  <span style={{ color: TENNIS_COLORS.WHITE }}>Set Tie-Break:</span>
                   <span className="ml-2 font-semibold" style={{ color: TENNIS_COLORS.WHITE }}>
                     {config.tieBreakRules === 'none' ? 'None' : 
                      config.tieBreakRules === '7-point' ? '7-Point' : '10-Point'}
@@ -511,7 +511,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
                 <div className="mt-4 pt-3 border-t border-gray-700">
                   <div className="text-center">
                     <span style={{ color: TENNIS_COLORS.YELLOW }} className="font-semibold">
-                      🎾 Final Set: {config.finalSetTieBreakPoints}-Point Tiebreak Only
+                      🎾 Final Set: {config.finalSetTieBreakPoints || 10}-Point Tiebreak Only
                     </span>
                   </div>
                 </div>
