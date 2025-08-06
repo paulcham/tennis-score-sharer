@@ -14,7 +14,7 @@ const ViewMatch: React.FC = () => {
   const [error, setError] = useState<string>('');
 
   // Real-time updates
-  const { match: realtimeMatch, isConnected, error: sseError, reconnect, lastUpdate } = useMatchUpdates({
+  const { match: realtimeMatch } = useMatchUpdates({
     matchId: matchId || '',
     enabled: !!matchId && !loading
   });
