@@ -523,14 +523,12 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
     const { player1Points, player2Points } = gameScore;
     
     if (config.scoringSystem === 'no-ad') {
-      // No-ad: if scoring player reaches 40 and opponent is not at 40, game is won
-      // Or if both are at 40, next point wins
+      // No-ad: game is won when player has 'game' status
+      // This happens when a player reaches 40 and opponent is at 30 or less, or at deuce (40-40) and scores
       if (scoringPlayer === 'player1') {
-        return (player1Points === 40 && player2Points !== 40) || 
-               (player1Points === 'game');
+        return player1Points === 'game';
       } else {
-        return (player2Points === 40 && player1Points !== 40) || 
-               (player2Points === 'game');
+        return player2Points === 'game';
       }
     } else {
       // Ad scoring: only win if player has 'game' (not 'advantage')
