@@ -80,8 +80,8 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
       const isCurrentSet = i === currentSet - 1;
       const hasStarted = set && (set.player1Games > 0 || set.player2Games > 0);
       
-      let setClass = "text-lg font-bold";
-      let setStyle: React.CSSProperties = { color: TENNIS_COLORS.YELLOW };
+      let setClass = "font-bold";
+      let setStyle: React.CSSProperties = { color: TENNIS_COLORS.YELLOW, fontSize: '2.5rem' };
       let cellClass = "p-4 text-center border-r";
       let cellStyle: React.CSSProperties = { borderColor: TENNIS_COLORS.WHITE };
       
@@ -89,18 +89,18 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
         // Completed sets: use winner/loser styling
         if (set?.winner === 'player1') {
           // Player 1 won this set - white text with dark background
-          setStyle = { color: TENNIS_COLORS.WHITE };
+          setStyle = { color: TENNIS_COLORS.WHITE, fontSize: '2.5rem' };
           cellStyle = { ...cellStyle, backgroundColor: TENNIS_COLORS.MEDIUM_DARK_GREY };
         } else if (set?.winner === 'player2') {
           // Player 1 lost this set - light grey text, no background
-          setStyle = { color: TENNIS_COLORS.LIGHT_GREY };
+          setStyle = { color: TENNIS_COLORS.LIGHT_GREY, fontSize: '2.5rem' };
         } else {
           // No winner determined yet - white text
-          setStyle = { color: TENNIS_COLORS.WHITE };
+          setStyle = { color: TENNIS_COLORS.WHITE, fontSize: '2.5rem' };
         }
       } else if (isCurrentSet) {
         // Active set: yellow background, black text
-        setStyle = { color: TENNIS_COLORS.BLACK };
+        setStyle = { color: TENNIS_COLORS.BLACK, fontSize: '2.5rem' };
         cellStyle = { ...cellStyle, backgroundColor: TENNIS_COLORS.YELLOW };
       }
       
@@ -142,8 +142,8 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
       const isCurrentSet = i === currentSet - 1;
       const hasStarted = set && (set.player1Games > 0 || set.player2Games > 0);
       
-      let setClass = "text-lg font-bold";
-      let setStyle: React.CSSProperties = { color: TENNIS_COLORS.YELLOW };
+      let setClass = "font-bold";
+      let setStyle: React.CSSProperties = { color: TENNIS_COLORS.YELLOW, fontSize: '2.5rem' };
       let cellClass = "p-4 text-center border-r";
       let cellStyle: React.CSSProperties = { borderColor: TENNIS_COLORS.WHITE };
       
@@ -151,18 +151,18 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
         // Completed sets: use winner/loser styling
         if (set?.winner === 'player2') {
           // Player 2 won this set - white text with dark background
-          setStyle = { color: TENNIS_COLORS.WHITE };
+          setStyle = { color: TENNIS_COLORS.WHITE, fontSize: '2.5rem' };
           cellStyle = { ...cellStyle, backgroundColor: TENNIS_COLORS.MEDIUM_DARK_GREY };
         } else if (set?.winner === 'player1') {
           // Player 2 lost this set - light grey text, no background
-          setStyle = { color: TENNIS_COLORS.LIGHT_GREY };
+          setStyle = { color: TENNIS_COLORS.LIGHT_GREY, fontSize: '2.5rem' };
         } else {
           // No winner determined yet - white text
-          setStyle = { color: TENNIS_COLORS.WHITE };
+          setStyle = { color: TENNIS_COLORS.WHITE, fontSize: '2.5rem' };
         }
       } else if (isCurrentSet) {
         // Active set: yellow background, black text
-        setStyle = { color: TENNIS_COLORS.BLACK };
+        setStyle = { color: TENNIS_COLORS.BLACK, fontSize: '2.5rem' };
         cellStyle = { ...cellStyle, backgroundColor: TENNIS_COLORS.YELLOW };
       }
       
@@ -225,14 +225,22 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full border-0">
       <CardContent className="p-0">
         <div className="bg-gray-900 text-white  overflow-hidden">
                       {/* Header */}
             <div className="bg-gray-800 px-6 py-3 border-b border-gray-700">
-              <h2 className="text-xl font-bold text-center" style={{ color: TENNIS_COLORS.YELLOW }}>
-                MatchSync
-              </h2>
+              <div className="text-center">
+                <h2 className="text-lg font-bold mb-1" style={{ color: TENNIS_COLORS.YELLOW }}>
+                  {config.player1Name} vs {config.player2Name}
+                </h2>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-sm text-gray-300">Live Match</span>
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: TENNIS_COLORS.SUCCESS_GREEN }}></div>
+                  <span className="text-sm" style={{ color: TENNIS_COLORS.SUCCESS_GREEN }}>Live Updates</span>
+                  <span className="text-xs text-gray-500">(Last: {new Date().toLocaleTimeString()})</span>
+                </div>
+              </div>
             </div>
 
             {/* Match Completion Announcement */}
@@ -358,7 +366,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
                   ) : (
                     <div className="w-3 h-3 mr-3"></div>
                   )}
-                  <span className="font-semibold text-lg uppercase" style={{ color: TENNIS_COLORS.WHITE }}>{config.player1Name}</span>
+                  <span className="font-semibold" style={{ color: TENNIS_COLORS.WHITE, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)' }}>{config.player1Name}</span>
                 </div>
               </div>
 
@@ -375,7 +383,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
 
                               {/* Game Score Column for Player 1 */}
                 <div className="p-4 text-center border-r flex items-center justify-center" style={{ borderColor: TENNIS_COLORS.WHITE }}>
-                <div className="text-lg font-bold" style={getCurrentScoreColorStyle('player1')}>
+                <div className="font-bold" style={{ ...getCurrentScoreColorStyle('player1'), fontSize: '2.5rem' }}>
                   {getCurrentScore('player1')}
                 </div>
               </div>
@@ -454,7 +462,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
                   ) : (
                     <div className="w-3 h-3 mr-3"></div>
                   )}
-                  <span className="font-semibold text-lg uppercase" style={{ color: TENNIS_COLORS.WHITE }}>{config.player2Name}</span>
+                  <span className="font-semibold" style={{ color: TENNIS_COLORS.WHITE, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)' }}>{config.player2Name}</span>
                 </div>
               </div>
 
@@ -471,7 +479,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
 
               {/* Game Score Column for Player 2 */}
               <div className="p-4 text-center flex items-center justify-center">
-                <div className="text-lg font-bold" style={getCurrentScoreColorStyle('player2')}>
+                <div className="font-bold" style={{ ...getCurrentScoreColorStyle('player2'), fontSize: '2.5rem' }}>
                   {getCurrentScore('player2')}
                 </div>
               </div>

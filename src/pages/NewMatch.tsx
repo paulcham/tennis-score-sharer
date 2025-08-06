@@ -40,8 +40,7 @@ const NewMatch: React.FC = () => {
       // Navigate to scoring page with match data in URL
       navigate(`/score-match/${match.id}`, { 
         state: { 
-          config,
-          adminToken: match.adminToken
+          config
         } 
       });
     } catch (error) {

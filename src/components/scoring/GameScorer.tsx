@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { GameScore, MatchConfig, Player, SetScore, TieBreakScore, Match } from '../../types/Scoring';
+import { GameScore, MatchConfig, Player, SetScore, TieBreakScore, Match, TennisPoint } from '../../types/Scoring';
 import { addPointToGame, removePointFromGame, isSetWon, isTieBreakNeeded, addPointToTieBreak } from '../../utils/scoring';
 import Scoreboard from './Scoreboard';
 import { MatchAPI } from '../../services/api';
@@ -44,7 +44,6 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
 
   // Match persistence state
   const [currentMatchId, setCurrentMatchId] = useState<string | null>(matchId || null);
-  const [currentAdminToken, setCurrentAdminToken] = useState<string | null>(adminToken || null);
   const [shareUrl, setShareUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
@@ -76,7 +75,6 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
       setFinalScoreline(match.finalScoreline || '');
       setShareUrl(match.shareUrl);
       setCurrentMatchId(id);
-      setCurrentAdminToken(match.adminToken || null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load match');
     } finally {
@@ -94,7 +92,6 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
       console.log('Created match:', { id: match.id, adminToken: match.adminToken });
       
       setCurrentMatchId(match.id);
-      setCurrentAdminToken(match.adminToken || null);
       setShareUrl(match.shareUrl);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create match');
@@ -116,14 +113,14 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
   const updateMatch = async (updates: Partial<Match>) => {
     if (isReadOnly) return; // Don't update in read-only mode
     
-    if (!currentMatchId || !currentAdminToken) {
-      console.log('Missing credentials:', { currentMatchId, currentAdminToken });
+    if (!currentMatchId) {
+      console.log('Missing match ID:', { currentMatchId });
       return;
     }
     
     try {
-      console.log('Updating match:', { currentMatchId, currentAdminToken, updates });
-      await MatchAPI.updateMatch(currentMatchId, currentAdminToken, updates);
+      console.log('Updating match:', { currentMatchId, updates });
+      await MatchAPI.updateMatch(currentMatchId, updates);
     } catch (err) {
       console.error('Update match error:', err);
       setError(err instanceof Error ? err.message : 'Failed to update match');
@@ -245,13 +242,21 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
             updatedSets[nextSet - 1] = { player1Games: 0, player2Games: 0, isComplete: false };
           }
           
-          // Update match in backend
+          // Reset for next game
+          const resetGameScore: GameScore = {
+            player1Points: 0 as TennisPoint,
+            player2Points: 0 as TennisPoint,
+            server: newTieBreakScore.server === 'player1' ? 'player2' : 'player1'
+          };
+          
+          // Update match in backend with reset game score
           updateMatch({
             sets: updatedSets,
             currentSet: nextSet,
             isTieBreak: false,
             tieBreakScore: newTieBreakScore,
-            gameHistory: [...updatedGameHistory]
+            gameHistory: [...updatedGameHistory],
+            currentGameScore: resetGameScore
           });
         }
         
@@ -267,11 +272,12 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
         });
         
         // Reset for next game
-        setGameScore({
-          player1Points: 0,
-          player2Points: 0,
+        const resetGameScoreForNextGame: GameScore = {
+          player1Points: 0 as TennisPoint,
+          player2Points: 0 as TennisPoint,
           server: newTieBreakScore.server === 'player1' ? 'player2' : 'player1'
-        });
+        };
+        setGameScore(resetGameScoreForNextGame);
       } else {
         // Update match in backend with tiebreak progress
         updateMatch({
@@ -323,6 +329,13 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
       // Check if tiebreak is needed BEFORE checking set completion
       const tieBreakNeeded = isTieBreakNeeded(updatedSets[currentSetIndex], config);
       if (tieBreakNeeded) {
+        // Reset for tiebreak (no game score in tiebreak)
+        const resetGameScoreForTiebreak: GameScore = {
+          player1Points: 0 as TennisPoint,
+          player2Points: 0 as TennisPoint,
+          server: newGameScore.server === 'player1' ? 'player2' : 'player1'
+        };
+        
         setIsTieBreak(true);
         setTieBreakScore({
           player1Points: 0,
@@ -332,7 +345,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
         });
         setSets(updatedSets);
         
-        // Update match in backend
+        // Update match in backend with reset game score
         updateMatch({
           sets: updatedSets,
           gameNumber: gameNumber + 1,
@@ -343,15 +356,11 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
             isComplete: false,
             server: newGameScore.server === 'player1' ? 'player2' : 'player1'
           },
-          gameHistory: updatedGameHistory
+          gameHistory: updatedGameHistory,
+          currentGameScore: resetGameScoreForTiebreak
         });
         
-        // Reset for tiebreak (no game score in tiebreak)
-        setGameScore({
-          player1Points: 0,
-          player2Points: 0,
-          server: newGameScore.server === 'player1' ? 'player2' : 'player1'
-        });
+        setGameScore(resetGameScoreForTiebreak);
         return;
       }
       
@@ -424,6 +433,13 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
                             (config.matchFormat === 'best-of-5' && nextSet === 5);
           
           if (isFinalSet && config.finalSetTieBreak) {
+            // Reset for final set tiebreak
+            const resetGameScoreForFinalSet: GameScore = {
+              player1Points: 0 as TennisPoint,
+              player2Points: 0 as TennisPoint,
+              server: newGameScore.server === 'player1' ? 'player2' : 'player1'
+            };
+            
             // Start final set as tiebreaker immediately
             setIsTieBreak(true);
             setTieBreakScore({
@@ -433,7 +449,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
               server: newGameScore.server === 'player1' ? 'player2' : 'player1'
             });
             
-            // Update match in backend
+            // Update match in backend with reset game score
             updateMatch({
               sets: updatedSets,
               currentSet: nextSet,
@@ -445,15 +461,24 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
                 isComplete: false,
                 server: newGameScore.server === 'player1' ? 'player2' : 'player1'
               },
-              gameHistory: [...updatedGameHistory]
+              gameHistory: [...updatedGameHistory],
+              currentGameScore: resetGameScoreForFinalSet
             });
           } else {
-            // Update match in backend
+            // Reset for next set
+            const resetGameScoreForNextSet: GameScore = {
+              player1Points: 0 as TennisPoint,
+              player2Points: 0 as TennisPoint,
+              server: newGameScore.server === 'player1' ? 'player2' : 'player1'
+            };
+            
+            // Update match in backend with reset game score
             updateMatch({
               sets: updatedSets,
               currentSet: nextSet,
               gameNumber: 1,
-              gameHistory: [...updatedGameHistory]
+              gameHistory: [...updatedGameHistory],
+              currentGameScore: resetGameScoreForNextSet
             });
           }
         }
@@ -461,19 +486,23 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
       
       setSets(updatedSets);
       
-      // Update match in backend
+      // Reset for next game
+      const resetGameScore: GameScore = {
+        player1Points: 0 as TennisPoint,
+        player2Points: 0 as TennisPoint,
+        server: newGameScore.server === 'player1' ? 'player2' : 'player1'
+      };
+      
+      // Update match in backend with reset game score
       updateMatch({
         sets: updatedSets,
         gameNumber: gameNumber + 1,
-        gameHistory: updatedGameHistory
+        gameHistory: updatedGameHistory,
+        currentGameScore: resetGameScore
       });
       
       // Reset for next game
-      setGameScore({
-        player1Points: 0,
-        player2Points: 0,
-        server: newGameScore.server === 'player1' ? 'player2' : 'player1'
-      });
+      setGameScore(resetGameScore);
     } else {
       // Update match in backend with current game score
       updateMatch({
@@ -598,7 +627,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
     <div className="space-y-6 w-full">
       {/* Share URL Display */}
       {shareUrl && (
-        <Card className="bg-gray-900 border-gray-700">
+        <Card className="bg-gray-900 border-0">
           <CardHeader>
             <CardTitle className="text-white">Share Match</CardTitle>
           </CardHeader>
@@ -643,7 +672,7 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
 
       {/* Game History */}
       {gameHistory.length > 0 && !isTieBreak && (
-        <Card className="bg-gray-900 border-gray-700">
+        <Card className="bg-gray-900 border-0">
           <CardHeader>
             <CardTitle className="text-white">Game History</CardTitle>
           </CardHeader>

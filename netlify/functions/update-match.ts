@@ -27,32 +27,18 @@ export const handler: Handler = async (event) => {
 
   try {
     const body = JSON.parse(event.body || '{}');
-    const { matchId, adminToken, updates }: { 
+    const { matchId, updates }: { 
       matchId: string; 
-      adminToken: string; 
       updates: Partial<Match> 
     } = body;
 
-    if (!matchId || !adminToken) {
+    if (!matchId) {
       return {
         statusCode: 400,
         headers: {
           'Access-Control-Allow-Origin': '*',
         },
-        body: JSON.stringify({ error: 'Match ID and admin token are required' }),
-      };
-    }
-
-    // Verify admin token
-    const isAuthorized = await MatchStorage.verifyAdminToken(matchId, adminToken);
-    console.log('Auth check:', { matchId, adminToken, isAuthorized });
-    if (!isAuthorized) {
-      return {
-        statusCode: 403,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({ error: 'Unauthorized access' }),
+        body: JSON.stringify({ error: 'Match ID is required' }),
       };
     }
 

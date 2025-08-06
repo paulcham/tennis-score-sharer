@@ -51,7 +51,6 @@ export class MatchAPI {
 
   static async updateMatch(
     matchId: string, 
-    adminToken: string, 
     updates: Partial<Match>
   ): Promise<{ match: Match; message: string }> {
     const response = await fetch(`${API_BASE}/update-match`, {
@@ -59,7 +58,7 @@ export class MatchAPI {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ matchId, adminToken, updates }),
+      body: JSON.stringify({ matchId, updates }),
     });
 
     if (!response.ok) {

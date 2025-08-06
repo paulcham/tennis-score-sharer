@@ -10,14 +10,12 @@ const ScoreMatch: React.FC = () => {
   const navigate = useNavigate();
   const { matchId: urlMatchId } = useParams<{ matchId: string }>();
   const [config, setConfig] = useState<MatchConfig | null>(null);
-  const [matchId, setMatchId] = useState<string | null>(null);
-  const [adminToken, setAdminToken] = useState<string | null>(null);
+  const [matchId, setMatchId] = useState<string | null>(urlMatchId || null);
 
   const loadMatchFromAPI = useCallback(async (matchId: string) => {
     try {
       const { match } = await MatchAPI.getMatch(matchId);
       setConfig(match.config);
-      // Note: We don't set adminToken here as it's not returned by the API for security
     } catch (error) {
       console.error('Error loading match:', error);
       // If we can't load the match, redirect to home
@@ -26,32 +24,14 @@ const ScoreMatch: React.FC = () => {
   }, [navigate]);
 
   useEffect(() => {
-    // First, try to get matchId from URL parameters
-    if (urlMatchId) {
-      setMatchId(urlMatchId);
-    }
-    
     // Check if we have config from navigation state (new match)
     if (location.state?.config) {
       setConfig(location.state.config);
-      if (location.state?.adminToken) {
-        setAdminToken(location.state.adminToken);
-      }
-    } else {
-      // Check URL parameters for admin token (existing match)
-      const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('adminToken');
-      
-      if (token) {
-        setAdminToken(token);
-      }
-      
+    } else if (matchId && !config) {
       // If we have a matchId but no config, load it from the API
-      if (urlMatchId && !config) {
-        loadMatchFromAPI(urlMatchId);
-      }
+      loadMatchFromAPI(matchId);
     }
-  }, [location, navigate, urlMatchId, config, loadMatchFromAPI]);
+  }, [location, navigate, matchId, config, loadMatchFromAPI]);
 
   if (!matchId) {
     return (
@@ -74,23 +54,13 @@ const ScoreMatch: React.FC = () => {
                 />
               </div>
               
-              <div>
-                <label className="block text-sm font-medium mb-2 text-white">Admin Token</label>
-                <input
-                  type="text"
-                  placeholder="Enter admin token"
-                  className="w-full p-3 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  onChange={(e) => setAdminToken(e.target.value)}
-                />
-              </div>
-              
               <Button 
                 onClick={() => {
                   if (matchId) {
-                    navigate(`/score-match/${matchId}?adminToken=${adminToken}`);
+                    navigate(`/score-match/${matchId}`);
                   }
                 }}
-                disabled={!matchId || !adminToken}
+                disabled={!matchId}
                 className="w-full text-white"
                 style={{
                   backgroundColor: '#22c55e',
@@ -120,7 +90,7 @@ const ScoreMatch: React.FC = () => {
     <div className="min-h-screen bg-black">
       {/* Header */}
       <div className="p-4 border-b border-gray-700">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
+        <div className="mx-auto flex items-center justify-between" style={{ maxWidth: '66rem' }}>
           <div>
             <Button 
               variant="ghost" 
@@ -149,12 +119,11 @@ const ScoreMatch: React.FC = () => {
 
       {/* Scoring Interface */}
       <div className="p-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="mx-auto" style={{ maxWidth: '66rem' }}>
           {config ? (
             <GameScorer 
               config={config}
               matchId={matchId || undefined}
-              adminToken={adminToken || undefined}
             />
           ) : (
             <div className="text-center py-8">

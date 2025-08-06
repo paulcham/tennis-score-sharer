@@ -84,61 +84,22 @@ const ViewMatch: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white mb-2">
-            {match.config.player1Name} vs {match.config.player2Name}
-          </h1>
-          <div className="flex items-center gap-4">
-            <p className="text-gray-400">
-              {match.status === 'completed' ? 'Match Complete' : 'Live Match'}
-            </p>
-            {isConnected && (
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: TENNIS_COLORS.SUCCESS_GREEN }}></div>
-                <span className="text-sm" style={{ color: TENNIS_COLORS.SUCCESS_GREEN }}>
-                  Live Updates
-                  {lastUpdate && (
-                    <span className="text-xs text-gray-500 ml-2">
-                      (Last: {lastUpdate.toLocaleTimeString()})
-                    </span>
-                  )}
-                </span>
-              </div>
-            )}
-            {sseError && (
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: TENNIS_COLORS.ERROR_RED }}></div>
-                <span className="text-sm" style={{ color: TENNIS_COLORS.ERROR_RED }}>{sseError}</span>
-                <button 
-                  onClick={reconnect}
-                  className="text-xs px-2 py-1 text-white rounded"
-                  style={{ backgroundColor: TENNIS_COLORS.INFO_BLUE }}
-                >
-                  Retry
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-        
-        <Scoreboard 
-          config={match.config}
-          currentGameScore={match.currentGameScore}
-          sets={match.sets}
-          currentSet={match.currentSet}
-          onAddPoint={() => {}} // No-op for read-only
-          onRemovePoint={() => {}} // No-op for read-only
-          onSetServer={() => {}} // No-op for read-only
-          isTieBreak={match.isTieBreak}
-          tieBreakScore={match.tieBreakScore}
-          isMatchComplete={match.status === 'completed'}
-          matchWinner={match.matchWinner}
-          finalScoreline={match.finalScoreline}
-          isReadOnly={true} // This makes it read-only
-        />
-      </div>
+    <div className="min-h-screen bg-black">
+      <Scoreboard 
+        config={match.config}
+        currentGameScore={match.currentGameScore}
+        sets={match.sets}
+        currentSet={match.currentSet}
+        onAddPoint={() => {}} // No-op for read-only
+        onRemovePoint={() => {}} // No-op for read-only
+        onSetServer={() => {}} // No-op for read-only
+        isTieBreak={match.isTieBreak}
+        tieBreakScore={match.tieBreakScore}
+        isMatchComplete={match.status === 'completed'}
+        matchWinner={match.matchWinner}
+        finalScoreline={match.finalScoreline}
+        isReadOnly={true} // This makes it read-only
+      />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -6,9 +6,16 @@ import { TENNIS_COLORS } from '../lib/colors';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const [matchId, setMatchId] = useState('');
 
   const handleStartNewMatch = () => {
     navigate('/new-match');
+  };
+
+  const handleReturnToMatch = () => {
+    if (matchId.trim()) {
+      navigate(`/score-match/${matchId.trim()}`);
+    }
   };
 
   return (
@@ -54,17 +61,35 @@ const Home: React.FC = () => {
             <CardHeader className="text-center">
               <CardTitle className="text-xl text-white">Return to Match</CardTitle>
               <CardDescription className="text-gray-300">
-                Continue scoring an existing match with your match ID and admin token
+                Continue scoring an existing match by entering the match ID
               </CardDescription>
             </CardHeader>
-            <CardContent className="text-center">
+            <CardContent className="text-center space-y-4">
+              <div>
+                <input
+                  type="text"
+                  placeholder="Enter match ID"
+                  value={matchId}
+                  onChange={(e) => setMatchId(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && matchId.trim()) {
+                      handleReturnToMatch();
+                    }
+                  }}
+                  className="w-full p-3 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+                />
+              </div>
               <Button 
-                onClick={() => navigate('/score-match')}
+                onClick={handleReturnToMatch}
                 size="lg"
-                variant="outline"
-                className="text-white text-lg px-6 py-3 border-gray-600 hover:bg-gray-800"
+                className={`text-white text-lg px-6 py-3 border-gray-600 ${
+                  matchId.trim() 
+                    ? 'bg-gray-700 hover:bg-gray-600' 
+                    : 'bg-gray-800 text-gray-400 cursor-not-allowed'
+                }`}
+                disabled={!matchId.trim()}
               >
-                Return to Match
+                Continue Match
               </Button>
             </CardContent>
           </Card>
