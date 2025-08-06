@@ -14,7 +14,9 @@ const NewMatch: React.FC = () => {
     setDuration: 6,
     tieBreakRules: '10-point',
     player1Name: '',
-    player2Name: ''
+    player2Name: '',
+    finalSetTieBreak: false,
+    finalSetTieBreakPoints: 10
   });
 
   const [isCreating, setIsCreating] = useState(false);

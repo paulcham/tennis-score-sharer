@@ -43,7 +43,11 @@ export const handler: Handler = async (event) => {
     const adminToken = generateAdminToken();
     
     // Generate shareable URL
-    const shareUrl = `${process.env.URL || 'http://localhost:3030'}/view/${matchId}`;
+    // For local development, use port 3030 (React app), for production use the Netlify URL
+    const baseUrl = process.env.URL?.includes('localhost:8898') 
+      ? 'http://localhost:3030' 
+      : (process.env.URL || 'http://localhost:3030');
+    const shareUrl = `${baseUrl}/view/${matchId}`;
 
     // Create new match
     const newMatch: Match = {

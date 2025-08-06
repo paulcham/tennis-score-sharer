@@ -147,6 +147,12 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
                         (config.matchFormat === 'best-of-5' && currentSet === 5);
       const isFinalSetTieBreak = isFinalSet && config.finalSetTieBreak;
       
+      console.log('Tiebreak scoring debug:', { 
+        isFinalSetTieBreak, 
+        finalSetTieBreakPoints: config.finalSetTieBreakPoints,
+        currentSet,
+        matchFormat: config.matchFormat
+      });
       const newTieBreakScore = addPointToTieBreak(
         tieBreakScore, 
         scoringPlayer, 
