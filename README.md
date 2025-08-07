@@ -59,6 +59,9 @@ npm install
 3. Start the development server:
 ```bash
 npm start
+# or use the new dev commands:
+npm run dev
+npm run dev:start
 ```
 
 4. In another terminal, start the Netlify dev server for functions:
@@ -66,12 +69,26 @@ npm start
 npx netlify dev
 ```
 
-The application will be available at `http://localhost:3030`
+### Development Commands
+
+The following npm scripts are available for development:
+
+- `npm start` - Start the React development server (port 3030)
+- `npm run dev` - Start the full development environment (Netlify dev server on port 8898)
+- `npm run dev:start` - Start the full development environment
+- `npm run dev:stop` - Stop the development server
+- `npm run dev:restart` - Restart the development server (stop + start)
+- `npm run dev:restart:cross` - Cross-platform restart (works on Windows/macOS/Linux)
+- `npm run frontend` - Start only the React frontend (port 3030)
+- `npm run backend` - Start only the Netlify dev server (port 8898)
+
+The application will be available at `http://localhost:8898` when using the dev commands, but the browser will only open `http://localhost:3030` automatically.
 
 ### Development Ports
 
-- **React App**: `http://localhost:3030` (changed from 3000)
-- **Netlify Functions**: `http://localhost:8898` (changed from 8888)
+- **React App (standalone)**: `http://localhost:3030` (changed from 3000) - Browser opens here automatically
+- **Full Dev Environment**: `http://localhost:8898` (Netlify dev server with React app + functions)
+- **Netlify Functions**: Available via `http://localhost:8898/.netlify/functions/*`
 
 These ports are configured to prevent conflicts with other local applications.
 

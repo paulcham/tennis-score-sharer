@@ -553,6 +553,125 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
     });
   };
 
+  const handleAdjustSetScore = (setIndex: number, player: Player, adjustment: number) => {
+    if (isReadOnly) return; // Don't allow adjustments in read-only mode
+    if (isMatchComplete) return; // Don't allow adjustments if match is complete
+    
+    const updatedSets = [...sets];
+    
+    // Ensure the set exists
+    if (!updatedSets[setIndex]) {
+      updatedSets[setIndex] = { player1Games: 0, player2Games: 0, isComplete: false };
+    }
+    
+    const currentSet = updatedSets[setIndex];
+    const currentGames = player === 'player1' ? currentSet.player1Games : currentSet.player2Games;
+    const newGames = Math.max(0, currentGames + adjustment); // Prevent negative games
+    
+    // Validate the adjustment
+    const requiredGames = config.setDuration;
+    const maxPossibleGames = requiredGames + 1; // Allow one extra game for tiebreak scenarios
+    
+    // Prevent impossible game counts
+    if (newGames > maxPossibleGames) {
+      return; // Don't allow more games than possible
+    }
+    
+    // If this is a completed set, be more restrictive with adjustments
+    if (currentSet.isComplete) {
+      // Only allow small adjustments to completed sets
+      if (Math.abs(adjustment) > 1) {
+        return; // Don't allow large adjustments to completed sets
+      }
+    }
+    
+    // Update the set score
+    if (player === 'player1') {
+      updatedSets[setIndex].player1Games = newGames;
+    } else {
+      updatedSets[setIndex].player2Games = newGames;
+    }
+    
+    // Re-evaluate set completion status
+    const updatedSet = updatedSets[setIndex];
+    const isSetComplete = isSetWon(updatedSet, config);
+    
+    if (isSetComplete) {
+      // Determine winner based on who has more games
+      const winner = updatedSet.player1Games > updatedSet.player2Games ? 'player1' : 'player2';
+      updatedSets[setIndex].isComplete = true;
+      updatedSets[setIndex].winner = winner;
+    } else {
+      // Set is not complete, clear completion status
+      updatedSets[setIndex].isComplete = false;
+      updatedSets[setIndex].winner = undefined;
+    }
+    
+    // Check if tiebreak is needed for the current set
+    const tieBreakNeeded = isTieBreakNeeded(updatedSet, config);
+    if (tieBreakNeeded && !isTieBreak) {
+      // Start tiebreak
+      setIsTieBreak(true);
+      setTieBreakScore({
+        player1Points: 0,
+        player2Points: 0,
+        isComplete: false,
+        server: gameScore.server === 'player1' ? 'player2' : 'player1'
+      });
+    } else if (!tieBreakNeeded && isTieBreak) {
+      // End tiebreak if no longer needed
+      setIsTieBreak(false);
+      setTieBreakScore({
+        player1Points: 0,
+        player2Points: 0,
+        isComplete: false,
+        server: 'player1'
+      });
+    }
+    
+    // Check if match is complete
+    const completedSets = updatedSets.filter(set => set.isComplete);
+    const player1Sets = completedSets.filter(set => set.winner === 'player1').length;
+    const player2Sets = completedSets.filter(set => set.winner === 'player2').length;
+    
+    let matchComplete = false;
+    if (config.matchFormat === 'single') {
+      matchComplete = completedSets.length > 0;
+    } else if (config.matchFormat === 'best-of-3') {
+      matchComplete = player1Sets >= 2 || player2Sets >= 2;
+    } else if (config.matchFormat === 'best-of-5') {
+      matchComplete = player1Sets >= 3 || player2Sets >= 3;
+    }
+    
+    if (matchComplete) {
+      const matchWinner = player1Sets >= player2Sets ? 'player1' : 'player2';
+      const finalScoreline = formatFinalScoreline(updatedSets);
+      
+      setIsMatchComplete(true);
+      setMatchWinner(matchWinner);
+      setFinalScoreline(finalScoreline);
+      
+      // Update match in backend
+      updateMatch({
+        status: 'completed',
+        sets: updatedSets,
+        isTieBreak: isTieBreak,
+        tieBreakScore: tieBreakScore,
+        matchWinner,
+        finalScoreline
+      });
+    } else {
+      // Update match in backend
+      updateMatch({
+        sets: updatedSets,
+        isTieBreak: isTieBreak,
+        tieBreakScore: tieBreakScore
+      });
+    }
+    
+    setSets(updatedSets);
+  };
+
   // Check if the game was won by the scoring player
   const checkIfGameWon = (gameScore: GameScore, scoringPlayer: Player, config: MatchConfig): boolean => {
     const { player1Points, player2Points } = gameScore;
@@ -665,9 +784,11 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
         isTieBreak={isTieBreak}
         tieBreakScore={tieBreakScore}
         onSetServer={handleSetServer}
+        onAdjustSetScore={handleAdjustSetScore}
         isMatchComplete={isMatchComplete}
         matchWinner={matchWinner}
         finalScoreline={finalScoreline}
+        isReadOnly={isReadOnly}
       />
 
       {/* Game History */}

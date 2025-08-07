@@ -12,6 +12,8 @@ interface ScoreboardProps {
   onAddPoint: (player: Player) => void;
   onRemovePoint: (player: Player) => void;
   onSetServer: (player: Player) => void;
+  onAdjustGameScore?: (player: Player, adjustment: number) => void;
+  onAdjustSetScore?: (setIndex: number, player: Player, adjustment: number) => void;
   isTieBreak?: boolean;
   tieBreakScore?: TieBreakScore;
   isMatchComplete?: boolean;
@@ -28,6 +30,8 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
   onAddPoint, 
   onRemovePoint,
   onSetServer,
+  onAdjustGameScore,
+  onAdjustSetScore,
   isTieBreak = false,
   tieBreakScore,
   isMatchComplete,
@@ -117,14 +121,92 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
       columns.push({
         key: i,
         content: (hasStarted || isCurrentSet) ? (
-          <>
+          <div className="flex flex-col items-center">
             <div className={setClass} style={setStyle}>
               {formatSetScore(sets[i]?.player1Games || 0, true)}
             </div>
-          </>
+            {!isReadOnly && onAdjustSetScore && (
+              <div className="flex items-center gap-1 mt-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className={`aspect-square h-6 w-6 p-0 text-xs ${
+                    isMatchComplete 
+                      ? 'text-gray-500 cursor-not-allowed' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                  }`}
+                  style={{
+                    backgroundColor: isMatchComplete ? '#444' : 'transparent',
+                    borderColor: isMatchComplete ? '#444' : '#555'
+                  }}
+                  onClick={() => onAdjustSetScore(i, 'player1', -1)}
+                  disabled={isMatchComplete}
+                >
+                  −
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className={`aspect-square h-6 w-6 p-0 text-xs ${
+                    isMatchComplete 
+                      ? 'text-gray-500 cursor-not-allowed' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                  }`}
+                  style={{
+                    backgroundColor: isMatchComplete ? '#444' : 'transparent',
+                    borderColor: isMatchComplete ? '#444' : '#555'
+                  }}
+                  onClick={() => onAdjustSetScore(i, 'player1', 1)}
+                  disabled={isMatchComplete}
+                >
+                  +
+                </Button>
+              </div>
+            )}
+          </div>
         ) : (
-          <div className={setClass} style={setStyle}>
-            &nbsp;
+          <div className="flex flex-col items-center">
+            <div className={setClass} style={setStyle}>
+              &nbsp;
+            </div>
+            {!isReadOnly && onAdjustSetScore && (
+              <div className="flex items-center gap-1 mt-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className={`aspect-square h-6 w-6 p-0 text-xs ${
+                    isMatchComplete 
+                      ? 'text-gray-500 cursor-not-allowed' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                  }`}
+                  style={{
+                    backgroundColor: isMatchComplete ? '#444' : 'transparent',
+                    borderColor: isMatchComplete ? '#444' : '#555'
+                  }}
+                  onClick={() => onAdjustSetScore(i, 'player1', -1)}
+                  disabled={isMatchComplete}
+                >
+                  −
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className={`aspect-square h-6 w-6 p-0 text-xs ${
+                    isMatchComplete 
+                      ? 'text-gray-500 cursor-not-allowed' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                  }`}
+                  style={{
+                    backgroundColor: isMatchComplete ? '#444' : 'transparent',
+                    borderColor: isMatchComplete ? '#444' : '#555'
+                  }}
+                  onClick={() => onAdjustSetScore(i, 'player1', 1)}
+                  disabled={isMatchComplete}
+                >
+                  +
+                </Button>
+              </div>
+            )}
           </div>
         ),
         cellClass: cellClass,
@@ -179,14 +261,92 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
       columns.push({
         key: i,
         content: (hasStarted || isCurrentSet) ? (
-          <>
+          <div className="flex flex-col items-center">
             <div className={setClass} style={setStyle}>
               {formatSetScore(sets[i]?.player2Games || 0, false)}
             </div>
-          </>
+            {!isReadOnly && onAdjustSetScore && (
+              <div className="flex items-center gap-1 mt-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className={`aspect-square h-6 w-6 p-0 text-xs ${
+                    isMatchComplete 
+                      ? 'text-gray-500 cursor-not-allowed' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                  }`}
+                  style={{
+                    backgroundColor: isMatchComplete ? '#444' : 'transparent',
+                    borderColor: isMatchComplete ? '#444' : '#555'
+                  }}
+                  onClick={() => onAdjustSetScore(i, 'player2', -1)}
+                  disabled={isMatchComplete}
+                >
+                  −
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className={`aspect-square h-6 w-6 p-0 text-xs ${
+                    isMatchComplete 
+                      ? 'text-gray-500 cursor-not-allowed' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                  }`}
+                  style={{
+                    backgroundColor: isMatchComplete ? '#444' : 'transparent',
+                    borderColor: isMatchComplete ? '#444' : '#555'
+                  }}
+                  onClick={() => onAdjustSetScore(i, 'player2', 1)}
+                  disabled={isMatchComplete}
+                >
+                  +
+                </Button>
+              </div>
+            )}
+          </div>
         ) : (
-          <div className={setClass} style={setStyle}>
-            &nbsp;
+          <div className="flex flex-col items-center">
+            <div className={setClass} style={setStyle}>
+              &nbsp;
+            </div>
+            {!isReadOnly && onAdjustSetScore && (
+              <div className="flex items-center gap-1 mt-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className={`aspect-square h-6 w-6 p-0 text-xs ${
+                    isMatchComplete 
+                      ? 'text-gray-500 cursor-not-allowed' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                  }`}
+                  style={{
+                    backgroundColor: isMatchComplete ? '#444' : 'transparent',
+                    borderColor: isMatchComplete ? '#444' : '#555'
+                  }}
+                  onClick={() => onAdjustSetScore(i, 'player2', -1)}
+                  disabled={isMatchComplete}
+                >
+                  −
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className={`aspect-square h-6 w-6 p-0 text-xs ${
+                    isMatchComplete 
+                      ? 'text-gray-500 cursor-not-allowed' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                  }`}
+                  style={{
+                    backgroundColor: isMatchComplete ? '#444' : 'transparent',
+                    borderColor: isMatchComplete ? '#444' : '#555'
+                  }}
+                  onClick={() => onAdjustSetScore(i, 'player2', 1)}
+                  disabled={isMatchComplete}
+                >
+                  +
+                </Button>
+              </div>
+            )}
           </div>
         ),
         cellClass: cellClass,
@@ -382,10 +542,40 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
               ))}
 
                               {/* Game Score Column for Player 1 */}
-                <div className="p-4 text-center border-r flex items-center justify-center" style={{ borderColor: TENNIS_COLORS.WHITE }}>
+                <div className="p-4 text-center border-r flex flex-col items-center justify-center" style={{ borderColor: TENNIS_COLORS.WHITE }}>
                 <div className="font-bold" style={{ ...getCurrentScoreColorStyle('player1'), fontSize: '2.5rem' }}>
                   {getCurrentScore('player1')}
                 </div>
+                {!isReadOnly && onAdjustGameScore && !isTieBreak && (
+                  <div className="flex items-center gap-1 mt-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="aspect-square h-6 w-6 p-0 text-xs text-white hover:bg-opacity-80"
+                      style={{
+                        backgroundColor: '#666',
+                        borderColor: '#666'
+                      }}
+                      onClick={() => onAdjustGameScore('player1', -1)}
+                      disabled={currentSetComplete}
+                    >
+                      −
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="aspect-square h-6 w-6 p-0 text-xs text-white hover:bg-opacity-80"
+                      style={{
+                        backgroundColor: '#666',
+                        borderColor: '#666'
+                      }}
+                      onClick={() => onAdjustGameScore('player1', 1)}
+                      disabled={currentSetComplete}
+                    >
+                      +
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -478,10 +668,40 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
               ))}
 
               {/* Game Score Column for Player 2 */}
-              <div className="p-4 text-center flex items-center justify-center">
+              <div className="p-4 text-center flex flex-col items-center justify-center">
                 <div className="font-bold" style={{ ...getCurrentScoreColorStyle('player2'), fontSize: '2.5rem' }}>
                   {getCurrentScore('player2')}
                 </div>
+                {!isReadOnly && onAdjustGameScore && !isTieBreak && (
+                  <div className="flex items-center gap-1 mt-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="aspect-square h-6 w-6 p-0 text-xs text-white hover:bg-opacity-80"
+                      style={{
+                        backgroundColor: '#666',
+                        borderColor: '#666'
+                      }}
+                      onClick={() => onAdjustGameScore('player2', -1)}
+                      disabled={currentSetComplete}
+                    >
+                      −
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="aspect-square h-6 w-6 p-0 text-xs text-white hover:bg-opacity-80"
+                      style={{
+                        backgroundColor: '#666',
+                        borderColor: '#666'
+                      }}
+                      onClick={() => onAdjustGameScore('player2', 1)}
+                      disabled={currentSetComplete}
+                    >
+                      +
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
 
