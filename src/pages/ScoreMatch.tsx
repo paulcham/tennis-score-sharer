@@ -101,12 +101,7 @@ const ScoreMatch: React.FC = () => {
             </Button>
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold text-white">Tennis Match Scoring</h1>
-            {config && (
-              <p className="text-sm text-gray-300">
-                {config.player1Name} vs {config.player2Name}
-              </p>
-            )}
+            <h1 className="text-xl font-bold text-white">MatchSync</h1>
             {matchId && (
               <p className="text-xs text-gray-500 mt-1">
                 Match ID: {matchId}
