@@ -13,8 +13,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // DEBUG: Track all operations
 const debugLog = (operation: string, data?: any) => {
-  const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] SUPABASE DEBUG - ${operation}:`, data);
+
 };
 
 // Convert Match to database format

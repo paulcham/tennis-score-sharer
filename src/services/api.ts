@@ -4,15 +4,8 @@ const API_BASE = process.env.NODE_ENV === 'development'
   ? 'http://localhost:8898/.netlify/functions' 
   : '/.netlify/functions';
 
-// Debug logging for API calls
-console.log('API_BASE:', API_BASE);
-console.log('NODE_ENV:', process.env.NODE_ENV);
-
 export class MatchAPI {
   static async createMatch(config: MatchConfig): Promise<{ match: Match; message: string }> {
-    console.log('Creating match with config:', config);
-    console.log('API URL:', `${API_BASE}/create-match`);
-    
     const response = await fetch(`${API_BASE}/create-match`, {
       method: 'POST',
       headers: {
@@ -20,9 +13,6 @@ export class MatchAPI {
       },
       body: JSON.stringify({ config }),
     });
-
-    console.log('Response status:', response.status);
-    console.log('Response ok:', response.ok);
 
     if (!response.ok) {
       const error = await response.json();

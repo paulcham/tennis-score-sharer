@@ -274,13 +274,10 @@ export function addPointToTieBreak(
   
   // Determine required points based on tiebreak type
   let requiredPoints: number;
-  console.log('Tiebreak debug:', { isFinalSetTieBreak, finalSetTieBreakPoints, tieBreakRules: config.tieBreakRules });
   if (isFinalSetTieBreak && finalSetTieBreakPoints) {
     requiredPoints = finalSetTieBreakPoints;
-    console.log('Using final set tiebreak points:', requiredPoints);
   } else {
     requiredPoints = config.tieBreakRules === '10-point' ? 10 : 7;
-    console.log('Using regular tiebreak points:', requiredPoints);
   }
   
   const totalPoints = player1Points + player2Points;

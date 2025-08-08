@@ -34,12 +34,7 @@ export const handler: Handler = async (event) => {
       };
     }
 
-    console.log('=== GET MATCH FUNCTION DEBUG ===');
-    console.log('Looking for match:', matchId);
     const match = await MatchStorage.getMatch(matchId);
-    console.log('Match found:', !!match);
-    console.log('Match data:', match ? JSON.stringify(match, null, 2) : 'null');
-    console.log('=== END GET MATCH FUNCTION ===');
 
     if (!match) {
           return {

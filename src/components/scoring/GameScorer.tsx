@@ -93,8 +93,6 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
       const result = await MatchAPI.createMatch(config);
       const match = result.match;
       
-      console.log('Created match:', { id: match.id, adminToken: match.adminToken });
-      
       setCurrentMatchId(match.id);
       setShareUrl(match.shareUrl);
     } catch (err) {
@@ -118,12 +116,10 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
     if (isReadOnly) return; // Don't update in read-only mode
     
     if (!currentMatchId) {
-      console.log('Missing match ID:', { currentMatchId });
       return;
     }
     
     try {
-      console.log('Updating match:', { currentMatchId, updates });
       await MatchAPI.updateMatch(currentMatchId, updates);
     } catch (err) {
       console.error('Update match error:', err);
@@ -148,12 +144,6 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
                         (config.matchFormat === 'best-of-5' && currentSet === 5);
       const isFinalSetTieBreak = isFinalSet && config.finalSetTieBreak;
       
-      console.log('Tiebreak scoring debug:', { 
-        isFinalSetTieBreak, 
-        finalSetTieBreakPoints: config.finalSetTieBreakPoints,
-        currentSet,
-        matchFormat: config.matchFormat
-      });
       const newTieBreakScore = addPointToTieBreak(
         tieBreakScore, 
         scoringPlayer, 
