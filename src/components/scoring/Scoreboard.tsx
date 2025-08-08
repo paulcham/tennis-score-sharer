@@ -3,6 +3,7 @@ import { Card, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { GameScore, SetScore, MatchConfig, Player, TieBreakScore } from '../../types/Scoring';
 import { TENNIS_COLORS } from '../../lib/colors';
+import TennisBallIcon from '../shared/TennisBallIcon';
 
 // SVG Icons for plus and minus
 const PlusIcon = ({ size = 24, color = 'currentColor' }: { size?: number; color?: string }) => (
@@ -136,14 +137,14 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
         content: (hasStarted || isCurrentSet) ? (
           <div className="flex flex-col items-center h-full justify-between">
             {!isReadOnly && onAdjustSetScore && (
-              <div className="flex items-center justify-center pt-2">
+              <div className="flex items-center justify-center w-full pt-1 pb-1">
                 <Button
                   size="sm"
                   variant="outline"
                   className={`aspect-square h-6 w-6 p-0 text-xs ${
                     isMatchComplete 
-                      ? 'text-gray-500 cursor-not-allowed' 
-                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                      ? 'text-gray-500 cursor-not-allowed opacity-30' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80 opacity-40'
                   }`}
                   style={{
                     backgroundColor: isMatchComplete ? '#444' : 'transparent',
@@ -160,14 +161,14 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
               {formatSetScore(sets[i]?.player1Games || 0, true)}
             </div>
             {!isReadOnly && onAdjustSetScore && (
-              <div className="flex items-center justify-center pb-2">
+              <div className="flex items-center justify-center w-full pt-1 pb-1">
                 <Button
                   size="sm"
                   variant="outline"
                   className={`aspect-square h-6 w-6 p-0 text-xs ${
                     isMatchComplete 
-                      ? 'text-gray-500 cursor-not-allowed' 
-                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                      ? 'text-gray-500 cursor-not-allowed opacity-30' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80 opacity-40'
                   }`}
                   style={{
                     backgroundColor: isMatchComplete ? '#444' : 'transparent',
@@ -184,14 +185,14 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
         ) : (
           <div className="flex flex-col items-center h-full justify-between">
             {!isReadOnly && onAdjustSetScore && (
-              <div className="flex items-center justify-center pt-2">
+              <div className="flex items-center justify-center w-full pt-1 pb-1">
                 <Button
                   size="sm"
                   variant="outline"
                   className={`aspect-square h-6 w-6 p-0 text-xs ${
                     isMatchComplete 
-                      ? 'text-gray-500 cursor-not-allowed' 
-                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                      ? 'text-gray-500 cursor-not-allowed opacity-30' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80 opacity-40'
                   }`}
                   style={{
                     backgroundColor: isMatchComplete ? '#444' : 'transparent',
@@ -208,14 +209,14 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
               &nbsp;
             </div>
             {!isReadOnly && onAdjustSetScore && (
-              <div className="flex items-center justify-center pb-2">
+              <div className="flex items-center justify-center w-full pt-1 pb-1">
                 <Button
                   size="sm"
                   variant="outline"
                   className={`aspect-square h-6 w-6 p-0 text-xs ${
                     isMatchComplete 
-                      ? 'text-gray-500 cursor-not-allowed' 
-                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                      ? 'text-gray-500 cursor-not-allowed opacity-30' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80 opacity-40'
                   }`}
                   style={{
                     backgroundColor: isMatchComplete ? '#444' : 'transparent',
@@ -284,14 +285,14 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
         content: (hasStarted || isCurrentSet) ? (
           <div className="flex flex-col items-center h-full justify-between">
             {!isReadOnly && onAdjustSetScore && (
-              <div className="flex items-center justify-center pt-2">
+              <div className="flex items-center justify-center w-full pt-1 pb-1">
                 <Button
                   size="sm"
                   variant="outline"
                   className={`aspect-square h-6 w-6 p-0 text-xs ${
                     isMatchComplete 
-                      ? 'text-gray-500 cursor-not-allowed' 
-                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                      ? 'text-gray-500 cursor-not-allowed opacity-30' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80 opacity-40'
                   }`}
                   style={{
                     backgroundColor: isMatchComplete ? '#444' : 'transparent',
@@ -308,14 +309,14 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
               {formatSetScore(sets[i]?.player2Games || 0, false)}
             </div>
             {!isReadOnly && onAdjustSetScore && (
-              <div className="flex items-center justify-center pb-2">
+              <div className="flex items-center justify-center w-full pt-1 pb-1">
                 <Button
                   size="sm"
                   variant="outline"
                   className={`aspect-square h-6 w-6 p-0 text-xs ${
                     isMatchComplete 
-                      ? 'text-gray-500 cursor-not-allowed' 
-                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                      ? 'text-gray-500 cursor-not-allowed opacity-30' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80 opacity-40'
                   }`}
                   style={{
                     backgroundColor: isMatchComplete ? '#444' : 'transparent',
@@ -332,14 +333,14 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
         ) : (
           <div className="flex flex-col items-center h-full justify-between">
             {!isReadOnly && onAdjustSetScore && (
-              <div className="flex items-center justify-center pt-2">
+              <div className="flex items-center justify-center w-full pt-1 pb-1">
                 <Button
                   size="sm"
                   variant="outline"
                   className={`aspect-square h-6 w-6 p-0 text-xs ${
                     isMatchComplete 
-                      ? 'text-gray-500 cursor-not-allowed' 
-                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                      ? 'text-gray-500 cursor-not-allowed opacity-30' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80 opacity-40'
                   }`}
                   style={{
                     backgroundColor: isMatchComplete ? '#444' : 'transparent',
@@ -356,14 +357,14 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
               &nbsp;
             </div>
             {!isReadOnly && onAdjustSetScore && (
-              <div className="flex items-center justify-center pb-2">
+              <div className="flex items-center justify-center w-full pt-1 pb-1">
                 <Button
                   size="sm"
                   variant="outline"
                   className={`aspect-square h-6 w-6 p-0 text-xs ${
                     isMatchComplete 
-                      ? 'text-gray-500 cursor-not-allowed' 
-                      : 'text-gray-400 hover:text-white hover:bg-opacity-80'
+                      ? 'text-gray-500 cursor-not-allowed opacity-30' 
+                      : 'text-gray-400 hover:text-white hover:bg-opacity-80 opacity-40'
                   }`}
                   style={{
                     backgroundColor: isMatchComplete ? '#444' : 'transparent',
@@ -517,9 +518,9 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
               <div className="p-4 border-r bg-gray-800 flex items-center" style={{ borderColor: TENNIS_COLORS.WHITE }}>
                 <div className="flex items-center w-full">
                   {(isTieBreak && tieBreakScore && tieBreakScore.server === 'player1') || (!isTieBreak && currentGameScore.server === 'player1') ? (
-                    <div className="w-3 h-3 rounded-full mr-3" style={{ backgroundColor: TENNIS_COLORS.YELLOW }}></div>
+                    <TennisBallIcon size={20} color={TENNIS_COLORS.YELLOW} className="mr-3" />
                   ) : (
-                    <div className="w-3 h-3 mr-3"></div>
+                    <div className="w-5 h-5 mr-3"></div>
                   )}
                   <span className="font-semibold" style={{ color: TENNIS_COLORS.WHITE, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)' }}>{config.player1Name}</span>
                 </div>
@@ -632,9 +633,9 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
                 <div className="p-4 border-r bg-gray-800 flex items-center" style={{ borderColor: TENNIS_COLORS.WHITE }}>
                 <div className="flex items-center w-full">
                   {(isTieBreak && tieBreakScore && tieBreakScore.server === 'player2') || (!isTieBreak && currentGameScore.server === 'player2') ? (
-                    <div className="w-3 h-3 rounded-full mr-3" style={{ backgroundColor: TENNIS_COLORS.YELLOW }}></div>
+                    <TennisBallIcon size={20} color={TENNIS_COLORS.YELLOW} className="mr-3" />
                   ) : (
-                    <div className="w-3 h-3 mr-3"></div>
+                    <div className="w-5 h-5 mr-3"></div>
                   )}
                   <span className="font-semibold" style={{ color: TENNIS_COLORS.WHITE, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)' }}>{config.player2Name}</span>
                 </div>
