@@ -10,6 +10,7 @@ A real-time tennis match scoring and sharing web application that allows parents
 - **Match Configuration**: Set up matches with player names, scoring rules, and match formats
 - **Interactive Scoring Interface**: Point-by-point scoring with undo functionality and server controls
 - **Match Sharing**: Generate unique URLs to share matches with viewers
+- **QR Code Sharing**: Generate QR codes for easy mobile sharing
 - **Read-only Viewer**: Public interface for following matches in real-time
 - **Match History**: Detailed game-by-game breakdown and match statistics
 - **Mobile Responsive**: Works perfectly on phones and tablets
@@ -17,6 +18,7 @@ A real-time tennis match scoring and sharing web application that allows parents
 - **Database Integration**: Persistent storage with Supabase PostgreSQL
 - **Type Safety**: Full TypeScript implementation across the stack
 - **Modern UI**: Beautiful interface built with shadcn/ui and Tailwind CSS
+- **Clean Code**: Optimized codebase with removed debug logs and improved performance
 
 ### 🔄 In Progress
 
@@ -42,6 +44,7 @@ A real-time tennis match scoring and sharing web application that allows parents
 
 - Node.js 18+ 
 - npm or yarn
+- Netlify CLI (for local development)
 
 ### Installation
 
@@ -56,7 +59,13 @@ cd tennis-score-sharer
 npm install
 ```
 
-3. Start the development server:
+3. Set up environment variables:
+```bash
+cp env-template.txt .env.local
+```
+Edit `.env.local` with your Supabase credentials (see Environment Setup below).
+
+4. Start the development server:
 ```bash
 npm start
 # or use the new dev commands:
@@ -64,7 +73,7 @@ npm run dev
 npm run dev:start
 ```
 
-4. In another terminal, start the Netlify dev server for functions:
+5. In another terminal, start the Netlify dev server for functions:
 ```bash
 npx netlify dev
 ```
@@ -90,6 +99,26 @@ The application will be available at `http://localhost:8898` when using the dev 
 - **Full Dev Environment**: `http://localhost:8898` (Netlify dev server with React app + functions)
 - **Netlify Functions**: Available via `http://localhost:8898/.netlify/functions/*`
 
+### Environment Setup
+
+The application requires Supabase configuration for database functionality. Create a `.env.local` file with the following variables:
+
+```bash
+# Supabase Configuration (Client-side)
+REACT_APP_SUPABASE_URL=https://your-project-id.supabase.co
+REACT_APP_SUPABASE_ANON_KEY=your-anon-key-here
+
+# Supabase Configuration (Server-side for Netlify Functions)
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+```
+
+**To get these values:**
+1. Create a Supabase project at [supabase.com](https://supabase.com)
+2. Go to Settings → API in your Supabase dashboard
+3. Copy the Project URL and anon/public key
+4. For the service role key, use the `service_role` key (keep this secret!)
+
 These ports are configured to prevent conflicts with other local applications.
 
 ## How to Use
@@ -108,7 +137,8 @@ These ports are configured to prevent conflicts with other local applications.
 
 3. **Share the Match**
    - Copy the shareable URL that appears at the top
-   - Send it to friends and family to let them follow along
+   - Click the QR code icon to generate a QR code for easy mobile sharing
+   - Send the URL or QR code to friends and family to let them follow along
 
 4. **Return to Match**
    - If you close the window or refresh, you can return to your match
@@ -130,6 +160,7 @@ These ports are configured to prevent conflicts with other local applications.
 - **Optimistic Updates**: UI updates immediately, syncs with server
 - **Error Handling**: Graceful fallback when network issues occur
 - **Caching**: Client-side caching to reduce API calls
+- **Clean Code**: Removed debug logs and optimized performance
 
 ### Future Enhancements
 - **WebSocket Integration**: Real-time bidirectional communication
@@ -174,19 +205,33 @@ src/
 │   ├── Home.tsx           # Landing page
 │   ├── NewMatch.tsx       # Match creation interface
 │   ├── ScoreMatch.tsx     # Admin scoring interface
-│   └── ViewMatch.tsx      # Public match viewer
+│   ├── ViewMatch.tsx      # Public match viewer
+│   ├── TestScoring.tsx    # Test scoring interface
+│   └── TestAPI.tsx        # Test API endpoints
 ├── components/             # Reusable UI components
 │   ├── ui/                # shadcn/ui components
+│   │   ├── button.tsx     # Button component
+│   │   └── card.tsx       # Card component
 │   ├── scoring/           # Scoring-specific components
+│   │   ├── GameScorer.tsx # Main scoring interface
+│   │   └── Scoreboard.tsx # Scoreboard display
 │   └── shared/            # Common components
+│       ├── QRCodeModal.tsx # QR code generation
+│       └── TennisBallIcon.tsx # Tennis ball icon
 ├── services/              # API integration layer
 │   └── api.ts            # HTTP client for Netlify functions
 ├── utils/                 # Business logic
 │   └── scoring.ts        # Tennis scoring algorithms
 ├── types/                 # TypeScript type definitions
 │   └── Scoring.ts        # Tennis scoring types
-└── hooks/                 # Custom React hooks
-    └── useMatchUpdates.ts # Real-time updates
+├── hooks/                 # Custom React hooks
+│   └── useMatchUpdates.ts # Real-time updates
+├── lib/                   # Library configurations
+│   ├── colors.ts         # Tennis color scheme
+│   ├── supabase.ts       # Supabase client
+│   └── utils.ts          # Utility functions
+└── styles/                # Global styles
+    └── index.css         # Global CSS
 ```
 
 ### Backend Structure
@@ -222,7 +267,13 @@ netlify/functions/
 
 ### Available Scripts
 
-- `npm start` - Start development server
+- `npm start` - Start React development server (port 3030)
+- `npm run dev` - Start full development environment (Netlify dev server on port 8898)
+- `npm run dev:start` - Start full development environment
+- `npm run dev:stop` - Stop the development server
+- `npm run dev:restart` - Restart the development server
+- `npm run frontend` - Start only the React frontend (port 3030)
+- `npm run backend` - Start only the Netlify dev server (port 8898)
 - `npm build` - Build for production
 - `npm test` - Run tests
 - `npx tsc --noEmit` - Type check
@@ -235,6 +286,14 @@ netlify/functions/
 - `/view/:matchId` - Public match viewing
 - `/test-scoring` - Test scoring interface
 - `/test-api` - Test API endpoints
+
+### Development Tips
+
+- **Hot Reload**: Both React and Netlify Functions support hot reloading
+- **Environment Variables**: Use `.env.local` for local development (not committed to git)
+- **Port Conflicts**: If you get port conflicts, the scripts are configured to use ports 3030 and 8898
+- **Database**: Make sure your Supabase project is set up and environment variables are configured
+- **Netlify CLI**: Install globally with `npm install -g netlify-cli` for better development experience
 
 ## System Architecture
 
@@ -271,12 +330,29 @@ The application is configured for deployment on Netlify with the following proce
 - **CDN Delivery**: Global content delivery via Netlify CDN
 - **Database Optimization**: Efficient queries with proper indexing
 - **Caching Strategy**: Browser caching for static assets
+- **Clean Code**: Removed debug logs and optimized component performance
+- **Type Safety**: Full TypeScript implementation prevents runtime errors
 
 ### Scalability Features
 - **Serverless Scaling**: Automatic scaling based on demand
 - **Database Scaling**: Supabase handles database scaling automatically
 - **Global CDN**: Content delivered from edge locations worldwide
 - **Connection Pooling**: Efficient database connection management
+
+## Recent Updates
+
+### Code Cleanup (Latest)
+- **Removed Debug Logs**: Cleaned up all development console.log statements
+- **Optimized Performance**: Improved component rendering and state management
+- **Enhanced UI**: Updated tennis ball icon behavior and QR code modal
+- **Better Error Handling**: Maintained important error logging while removing debug noise
+- **Type Safety**: Full TypeScript implementation prevents runtime errors
+
+### Key Improvements
+- **QR Code Sharing**: Added QR code generation for easy mobile sharing
+- **Tennis Ball Icon**: Improved serving indicator with single visible icon
+- **Modal Design**: Clean, centered QR code modal with proper spacing
+- **Development Experience**: Better npm scripts and port configuration
 
 ## Contributing
 
@@ -285,6 +361,13 @@ The application is configured for deployment on Netlify with the following proce
 3. Make your changes
 4. Add tests if applicable
 5. Submit a pull request
+
+### Development Guidelines
+- Follow TypeScript best practices
+- Use functional components with hooks
+- Maintain clean code without debug logs
+- Test API endpoints thoroughly
+- Update documentation for new features
 
 ## License
 

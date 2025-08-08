@@ -2,7 +2,7 @@
 
 ## Architecture Overview
 
-The Tennis Score Sharer is a modern web application built with a serverless architecture that enables real-time tennis match scoring and sharing. The system is designed for scalability, reliability, and ease of deployment.
+The Tennis Score Sharer is a modern web application built with a serverless architecture that enables real-time tennis match scoring and sharing. The system is designed for scalability, reliability, and ease of deployment. The application has been optimized with clean code practices, removing debug logs and improving performance.
 
 ## System Architecture Diagram
 
@@ -56,19 +56,33 @@ src/
 │   ├── Home.tsx           # Landing page
 │   ├── NewMatch.tsx       # Match creation interface
 │   ├── ScoreMatch.tsx     # Admin scoring interface
-│   └── ViewMatch.tsx      # Public match viewer
+│   ├── ViewMatch.tsx      # Public match viewer
+│   ├── TestScoring.tsx    # Test scoring interface
+│   └── TestAPI.tsx        # Test API endpoints
 ├── components/             # Reusable UI components
 │   ├── ui/                # shadcn/ui components
+│   │   ├── button.tsx     # Button component
+│   │   └── card.tsx       # Card component
 │   ├── scoring/           # Scoring-specific components
+│   │   ├── GameScorer.tsx # Main scoring interface
+│   │   └── Scoreboard.tsx # Scoreboard display
 │   └── shared/            # Common components
+│       ├── QRCodeModal.tsx # QR code generation
+│       └── TennisBallIcon.tsx # Tennis ball icon
 ├── services/              # API integration layer
 │   └── api.ts            # HTTP client for Netlify functions
 ├── utils/                 # Business logic
 │   └── scoring.ts        # Tennis scoring algorithms
 ├── types/                 # TypeScript type definitions
 │   └── Scoring.ts        # Tennis scoring types
-└── hooks/                 # Custom React hooks
-    └── useMatchUpdates.ts # Real-time updates
+├── hooks/                 # Custom React hooks
+│   └── useMatchUpdates.ts # Real-time updates
+├── lib/                   # Library configurations
+│   ├── colors.ts         # Tennis color scheme
+│   ├── supabase.ts       # Supabase client
+│   └── utils.ts          # Utility functions
+└── styles/                # Global styles
+    └── index.css         # Global CSS
 ```
 
 ### 2. Backend Architecture
