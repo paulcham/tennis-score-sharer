@@ -456,31 +456,11 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
             <div 
               className="grid gap-0 mb-4"
               style={{ 
-                gridTemplateColumns: isReadOnly ? `1fr repeat(${setCount}, 80px) 80px` : `120px 1fr repeat(${setCount}, 80px) 80px 120px`,
-                gridTemplateAreas: isReadOnly ? `"player1 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game1"` : `"server player1 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game1 buttons"`
+                gridTemplateColumns: isReadOnly ? `1fr repeat(${setCount}, 80px) 80px` : `1fr repeat(${setCount}, 80px) 80px 120px`,
+                gridTemplateAreas: isReadOnly ? `"player1 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game1"` : `"player1 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game1 buttons"`
               }}
             >
-              {/* Switch Server Button */}
-              {!isReadOnly && (
-                <div className="flex items-center justify-center">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-white hover:bg-opacity-80"
-                    style={{
-                      backgroundColor: TENNIS_COLORS.BLUE,
-                      borderColor: TENNIS_COLORS.BLUE
-                    }}
-                    onClick={() => {
-                      const currentServer = isTieBreak ? tieBreakScore?.server : currentGameScore.server;
-                      const newServer = currentServer === 'player1' ? 'player2' : 'player1';
-                      onSetServer(newServer);
-                    }}
-                  >
-                    Switch Server
-                  </Button>
-                </div>
-              )}
+
 
               {/* Empty Player Column */}
               <div></div>
@@ -518,9 +498,20 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
               <div className="p-4 border-r bg-gray-800 flex items-center" style={{ borderColor: TENNIS_COLORS.WHITE }}>
                 <div className="flex items-center w-full">
                   {(isTieBreak && tieBreakScore && tieBreakScore.server === 'player1') || (!isTieBreak && currentGameScore.server === 'player1') ? (
-                    <TennisBallIcon size={20} color={TENNIS_COLORS.YELLOW} className="mr-3" />
+                    <button
+                      onClick={() => {
+                        if (!isReadOnly) {
+                          const newServer = 'player2';
+                          onSetServer(newServer);
+                        }
+                      }}
+                      className="mr-3 cursor-pointer hover:opacity-80 transition-opacity"
+                      disabled={isReadOnly}
+                    >
+                      <TennisBallIcon size={20} color={TENNIS_COLORS.YELLOW} />
+                    </button>
                   ) : (
-                    <div className="w-5 h-5 mr-3"></div>
+                    <div className="mr-3 w-5 h-5"></div>
                   )}
                   <span className="font-semibold" style={{ color: TENNIS_COLORS.WHITE, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)' }}>{config.player1Name}</span>
                 </div>
@@ -633,9 +624,20 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
                 <div className="p-4 border-r bg-gray-800 flex items-center" style={{ borderColor: TENNIS_COLORS.WHITE }}>
                 <div className="flex items-center w-full">
                   {(isTieBreak && tieBreakScore && tieBreakScore.server === 'player2') || (!isTieBreak && currentGameScore.server === 'player2') ? (
-                    <TennisBallIcon size={20} color={TENNIS_COLORS.YELLOW} className="mr-3" />
+                    <button
+                      onClick={() => {
+                        if (!isReadOnly) {
+                          const newServer = 'player1';
+                          onSetServer(newServer);
+                        }
+                      }}
+                      className="mr-3 cursor-pointer hover:opacity-80 transition-opacity"
+                      disabled={isReadOnly}
+                    >
+                      <TennisBallIcon size={20} color={TENNIS_COLORS.YELLOW} />
+                    </button>
                   ) : (
-                    <div className="w-5 h-5 mr-3"></div>
+                    <div className="mr-3 w-5 h-5"></div>
                   )}
                   <span className="font-semibold" style={{ color: TENNIS_COLORS.WHITE, fontSize: 'clamp(1.75rem, 4vw, 2.5rem)' }}>{config.player2Name}</span>
                 </div>
