@@ -5,6 +5,7 @@ import { addPointToGame, removePointFromGame, isSetWon, isTieBreakNeeded, addPoi
 import Scoreboard from './Scoreboard';
 import { MatchAPI } from '../../services/api';
 import { TENNIS_COLORS } from '../../lib/colors';
+import QRCodeModal from '../shared/QRCodeModal';
 
 interface GameScorerProps {
   config: MatchConfig;
@@ -47,6 +48,9 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
   const [shareUrl, setShareUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
+  
+  // QR Code state
+  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
 
 
 
@@ -763,7 +767,14 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
                 className="px-4 py-2 text-white rounded"
                 style={{ backgroundColor: TENNIS_COLORS.INFO_BLUE }}
               >
-                Copy
+                Copy URL
+              </button>
+              <button
+                onClick={() => setIsQRModalOpen(true)}
+                className="px-4 py-2 text-white rounded"
+                style={{ backgroundColor: TENNIS_COLORS.GREEN }}
+              >
+                QR Code
               </button>
             </div>
             <p className="text-sm text-gray-300 mt-2">
@@ -772,6 +783,13 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
           </CardContent>
         </Card>
       )}
+      
+      {/* QR Code Modal */}
+      <QRCodeModal
+        url={shareUrl}
+        isOpen={isQRModalOpen}
+        onClose={() => setIsQRModalOpen(false)}
+      />
 
       {/* Scoreboard at top */}
       <Scoreboard 

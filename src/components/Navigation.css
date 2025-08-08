@@ -1,0 +1,36 @@
+/* Navigation Component CSS with BEM Methodology */
+
+.navigation {
+  background-color: var(--tennis-white);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.navigation__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+}
+
+.navigation__list {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navigation__item {
+  font-weight: 500;
+  color: var(--tennis-info-blue);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.navigation__item:hover {
+  opacity: 0.8;
+}
+
+.navigation__item--active {
+  border-bottom: 2px solid var(--tennis-info-blue);
+}
