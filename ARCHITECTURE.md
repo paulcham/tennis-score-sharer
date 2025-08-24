@@ -1,8 +1,8 @@
-# Tennis Score Sharer - System Architecture
+# RallySync - System Architecture
 
 ## Architecture Overview
 
-The Tennis Score Sharer is a modern web application built with a serverless architecture that enables real-time tennis match scoring and sharing. The system is designed for scalability, reliability, and ease of deployment. The application has been optimized with clean code practices, removing debug logs and improving performance.
+The RallySync is a modern web application built with a serverless architecture that enables real-time tennis match scoring and sharing. The system is designed for scalability, reliability, and ease of deployment. The application has been optimized with clean code practices, removing debug logs and improving performance.
 
 ## System Architecture Diagram
 
@@ -243,4 +243,4 @@ netlify/functions/
 
 ## Conclusion
 
-The Tennis Score Sharer architecture is designed for modern web development best practices, with a focus on scalability, maintainability, and user experience. The serverless approach provides cost-effective scaling while the TypeScript stack ensures type safety and developer productivity. 
+The RallySync architecture is designed for modern web development best practices, with a focus on scalability, maintainability, and user experience. The serverless approach provides cost-effective scaling while the TypeScript stack ensures type safety and developer productivity. 

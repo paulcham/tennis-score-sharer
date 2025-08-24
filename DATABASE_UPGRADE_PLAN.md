@@ -1,8 +1,8 @@
-# Tennis Score Sharer - Database Upgrade Plan
+# RallySync - Database Upgrade Plan
 
 ## Overview
 
-This document outlines the comprehensive plan for upgrading the Tennis Score Sharer application from its current simple JSONB-based structure to a normalized, scalable database design that supports advanced features including point-level detail tracking, real-time statistics, player profiles, and user authentication.
+This document outlines the comprehensive plan for upgrading the RallySync application from its current simple JSONB-based structure to a normalized, scalable database design that supports advanced features including point-level detail tracking, real-time statistics, player profiles, and user authentication.
 
 ## Current State Analysis
 
@@ -606,4 +606,4 @@ user_sessions (session management)
 4. **Regular Reviews**: Weekly progress reviews and adjustments
 5. **Deployment**: Deploy when all phases are complete
 
-This plan provides a comprehensive roadmap for upgrading the Tennis Score Sharer application to support advanced features with a clean, direct implementation approach.
+This plan provides a comprehensive roadmap for upgrading the RallySync application to support advanced features with a clean, direct implementation approach.

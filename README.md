@@ -1,4 +1,4 @@
-# Tennis Score Sharer
+# RallySync
 
 A real-time tennis match scoring and sharing web application that allows parents to track and share their children's tennis matches in real-time.
 
@@ -51,7 +51,7 @@ A real-time tennis match scoring and sharing web application that allows parents
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd tennis-score-sharer
+cd rallysync
 ```
 
 2. Install dependencies:

@@ -1,4 +1,4 @@
-# Tennis Score Sharer - Development Plan
+# RallySync - Development Plan
 
 ## Project Overview
 A real-time tennis match scoring and sharing web application that allows parents to track and share their children's tennis matches in real-time.

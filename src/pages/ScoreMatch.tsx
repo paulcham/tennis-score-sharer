@@ -101,7 +101,7 @@ const ScoreMatch: React.FC = () => {
             </Button>
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-bold text-white">MatchSync</h1>
+            <h1 className="text-xl font-bold text-white">RallySync</h1>
             {matchId && (
               <p className="text-xs text-gray-500 mt-1">
                 Match ID: {matchId}
