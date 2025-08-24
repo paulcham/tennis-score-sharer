@@ -112,6 +112,38 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
     }
   }, [matchId, createNewMatch]);
 
+  // Check if current set should be a final set tiebreak
+  useEffect(() => {
+    if (!isMatchComplete && !isTieBreak) {
+      const isFinalSet = (config.matchFormat === 'best-of-3' && currentSet === 3) || 
+                        (config.matchFormat === 'best-of-5' && currentSet === 5);
+      const shouldBeFinalSetTieBreak = isFinalSet && config.finalSetTieBreak;
+      
+      if (shouldBeFinalSetTieBreak) {
+        // Start final set as tiebreaker immediately
+        setIsTieBreak(true);
+        setTieBreakScore({
+          player1Points: 0,
+          player2Points: 0,
+          isComplete: false,
+          server: gameScore.server
+        });
+        
+        // Update match in backend
+        updateMatch({
+          isTieBreak: true,
+          tieBreakScore: {
+            player1Points: 0,
+            player2Points: 0,
+            isComplete: false,
+            server: gameScore.server
+          }
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentSet, config, isMatchComplete, isTieBreak, gameScore.server]);
+
   const updateMatch = async (updates: Partial<Match>) => {
     if (isReadOnly) return; // Don't update in read-only mode
     
@@ -135,6 +167,33 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
     const currentSetData = sets[currentSetIndex];
     if (currentSetData?.isComplete) {
       return;
+    }
+
+    // Check if this is the final set and should be played as tiebreaker only
+    const isFinalSet = (config.matchFormat === 'best-of-3' && currentSet === 3) || 
+                      (config.matchFormat === 'best-of-5' && currentSet === 5);
+    const shouldBeFinalSetTieBreak = isFinalSet && config.finalSetTieBreak;
+    
+    // If this should be a final set tiebreak but we're not in tiebreak mode, force it
+    if (shouldBeFinalSetTieBreak && !isTieBreak) {
+      setIsTieBreak(true);
+      setTieBreakScore({
+        player1Points: 0,
+        player2Points: 0,
+        isComplete: false,
+        server: gameScore.server
+      });
+      
+      // Update match in backend
+      updateMatch({
+        isTieBreak: true,
+        tieBreakScore: {
+          player1Points: 0,
+          player2Points: 0,
+          isComplete: false,
+          server: gameScore.server
+        }
+      });
     }
 
     // Handle tiebreak scoring
@@ -320,10 +379,50 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
         updatedSets[currentSetIndex].player2Games += 1;
       }
       
+      // Check if this is the final set and should be played as tiebreaker only
+      const isFinalSet = (config.matchFormat === 'best-of-3' && currentSet === 3) || 
+                        (config.matchFormat === 'best-of-5' && currentSet === 5);
+      const shouldBeFinalSetTieBreak = isFinalSet && config.finalSetTieBreak;
+      
       // Check if tiebreak is needed BEFORE checking set completion
       const tieBreakNeeded = isTieBreakNeeded(updatedSets[currentSetIndex], config);
-      if (tieBreakNeeded) {
-        // Reset for tiebreak (no game score in tiebreak)
+      
+      if (shouldBeFinalSetTieBreak) {
+        // Final set should be played as tiebreaker - start tiebreak immediately
+        const resetGameScoreForTiebreak: GameScore = {
+          player1Points: 0 as TennisPoint,
+          player2Points: 0 as TennisPoint,
+          server: newGameScore.server === 'player1' ? 'player2' : 'player1'
+        };
+        
+        setIsTieBreak(true);
+        setTieBreakScore({
+          player1Points: 0,
+          player2Points: 0,
+          isComplete: false,
+          server: newGameScore.server === 'player1' ? 'player2' : 'player1'
+        });
+        setSets(updatedSets);
+        
+        // Update match in backend with reset game score
+        updateMatch({
+          sets: updatedSets,
+          gameNumber: gameNumber + 1,
+          isTieBreak: true,
+          tieBreakScore: {
+            player1Points: 0,
+            player2Points: 0,
+            isComplete: false,
+            server: newGameScore.server === 'player1' ? 'player2' : 'player1'
+          },
+          gameHistory: updatedGameHistory,
+          currentGameScore: resetGameScoreForTiebreak
+        });
+        
+        setGameScore(resetGameScoreForTiebreak);
+        return;
+      } else if (tieBreakNeeded) {
+        // Regular tiebreak needed (not final set tiebreak)
         const resetGameScoreForTiebreak: GameScore = {
           player1Points: 0 as TennisPoint,
           player2Points: 0 as TennisPoint,
@@ -601,10 +700,16 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
       updatedSets[setIndex].winner = undefined;
     }
     
+    // Check if this is the final set and should be played as tiebreaker only
+    const isFinalSet = (config.matchFormat === 'best-of-3' && (setIndex + 1) === 3) || 
+                      (config.matchFormat === 'best-of-5' && (setIndex + 1) === 5);
+    const shouldBeFinalSetTieBreak = isFinalSet && config.finalSetTieBreak;
+    
     // Check if tiebreak is needed for the current set
     const tieBreakNeeded = isTieBreakNeeded(updatedSet, config);
-    if (tieBreakNeeded && !isTieBreak) {
-      // Start tiebreak
+    
+    if (shouldBeFinalSetTieBreak && !isTieBreak) {
+      // Start final set tiebreak immediately
       setIsTieBreak(true);
       setTieBreakScore({
         player1Points: 0,
@@ -612,8 +717,17 @@ const GameScorer: React.FC<GameScorerProps> = ({ config, matchId, adminToken, is
         isComplete: false,
         server: gameScore.server === 'player1' ? 'player2' : 'player1'
       });
-    } else if (!tieBreakNeeded && isTieBreak) {
-      // End tiebreak if no longer needed
+    } else if (tieBreakNeeded && !isTieBreak && !shouldBeFinalSetTieBreak) {
+      // Start regular tiebreak (not final set tiebreak)
+      setIsTieBreak(true);
+      setTieBreakScore({
+        player1Points: 0,
+        player2Points: 0,
+        isComplete: false,
+        server: gameScore.server === 'player1' ? 'player2' : 'player1'
+      });
+    } else if (!tieBreakNeeded && isTieBreak && !shouldBeFinalSetTieBreak) {
+      // End tiebreak if no longer needed (but not for final set tiebreak)
       setIsTieBreak(false);
       setTieBreakScore({
         player1Points: 0,

@@ -9,10 +9,10 @@ import { MatchAPI } from '../services/api';
 const NewMatch: React.FC = () => {
   const navigate = useNavigate();
   const [config, setConfig] = useState<MatchConfig>({
-    scoringSystem: 'ad',
+    scoringSystem: 'no-ad',
     matchFormat: 'best-of-3',
     setDuration: 6,
-    tieBreakRules: '10-point',
+    tieBreakRules: '7-point',
     player1Name: '',
     player2Name: '',
     finalSetTieBreak: false,
