@@ -4,6 +4,8 @@ import { Button } from '../ui/button';
 import { GameScore, SetScore, MatchConfig, Player, TieBreakScore } from '../../types/Scoring';
 import { TENNIS_COLORS } from '../../lib/colors';
 import TennisBallIcon from '../shared/TennisBallIcon';
+import GameMessage from './GameMessage';
+import { isBreakPoint, isSetPoint, isMatchPoint } from '../../utils/scoring';
 
 // SVG Icons for plus and minus
 const PlusIcon = ({ size = 24, color = 'currentColor' }: { size?: number; color?: string }) => (
@@ -414,6 +416,16 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
     }
   };
 
+  // Check for break point and set point
+  const breakPointExists = !isTieBreak && isBreakPoint(currentGameScore, config);
+  const setPointExists = !isTieBreak && isSetPoint(currentGameScore, sets[currentSet - 1], config);
+  const matchPointExists = !isTieBreak && isMatchPoint(currentGameScore, sets[currentSet - 1], sets, config);
+  
+  // Prioritize match point over set point over break point
+  const showMatchPoint = matchPointExists;
+  const showSetPoint = setPointExists && !matchPointExists;
+  const showBreakPoint = breakPointExists && !setPointExists && !matchPointExists;
+
   return (
     <Card className="w-full border-0">
       <CardContent className="p-0">
@@ -460,10 +472,24 @@ const Scoreboard: React.FC<ScoreboardProps> = ({
                 gridTemplateAreas: isReadOnly ? `"player1 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game1"` : `"player1 ${Array.from({length: setCount}, (_, i) => `set${i+1}`).join(' ')} game1 buttons"`
               }}
             >
-
-
-              {/* Empty Player Column */}
-              <div></div>
+              {/* Game Message Column - far left */}
+              <div className="flex items-center justify-start" style={{ minHeight: '40px' }}>
+                <GameMessage 
+                  message="Match Point"
+                  type="match-point"
+                  isVisible={showMatchPoint}
+                />
+                <GameMessage 
+                  message="Set Point"
+                  type="set-point"
+                  isVisible={showSetPoint}
+                />
+                <GameMessage 
+                  message="Break Point"
+                  type="break-point"
+                  isVisible={showBreakPoint}
+                />
+              </div>
 
               {/* Set Labels */}
               {Array.from({length: setCount}, (_, i) => (

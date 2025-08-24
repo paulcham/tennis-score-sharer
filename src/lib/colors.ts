@@ -3,6 +3,7 @@ export const TENNIS_COLORS = {
   YELLOW: '#dfff4e',
   GREEN: '#69b550', 
   BLUE: '#267ede',
+  ORANGE: '#f97316',
   WHITE: '#ffffff',
   LIGHT_GREY: '#9ca3af',
   MEDIUM_DARK_GREY: '#4b5563',

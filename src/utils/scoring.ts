@@ -348,4 +348,203 @@ export function getMatchWinner(match: { sets: SetScore[], config: MatchConfig })
   }
   
   return null;
-} 
+}
+
+// Check if a break point opportunity exists
+export function isBreakPoint(gameScore: GameScore, config: MatchConfig): boolean {
+  const { player1Points, player2Points, server } = gameScore;
+  
+  if (config.scoringSystem === 'no-ad') {
+    // In no-ad scoring, break point occurs when the non-serving player is one point away from winning
+    if (server === 'player1') {
+      // Player 1 is serving, check if Player 2 can break
+      if (player2Points === 40 && typeof player1Points === 'number' && player1Points <= 30) {
+        // Player 2 is at 40, Player 1 is at 30 or less - Player 2 can win with next point
+        return true;
+      }
+      if (player2Points === 40 && player1Points === 40) {
+        // Both at 40 (deuce) - Player 2 can win with next point
+        return true;
+      }
+    } else {
+      // Player 2 is serving, check if Player 1 can break
+      if (player1Points === 40 && typeof player2Points === 'number' && player2Points <= 30) {
+        // Player 1 is at 40, Player 2 is at 30 or less - Player 1 can win with next point
+        return true;
+      }
+      if (player1Points === 40 && player2Points === 40) {
+        // Both at 40 (deuce) - Player 1 can win with next point
+        return true;
+      }
+    }
+  } else {
+    // In ad scoring, break point occurs when the non-serving player is one point away from winning
+    if (server === 'player1') {
+      // Player 1 is serving, check if Player 2 can break
+      if (player2Points === 40 && typeof player1Points === 'number' && player1Points <= 30) {
+        // Player 2 is at 40, Player 1 is at 30 or less - Player 2 can win with next point
+        return true;
+      }
+      if (player2Points === 'advantage') {
+        // Player 2 has advantage - Player 2 can win with next point
+        return true;
+      }
+    } else {
+      // Player 2 is serving, check if Player 1 can break
+      if (player1Points === 40 && typeof player2Points === 'number' && player2Points <= 30) {
+        // Player 1 is at 40, Player 2 is at 30 or less - Player 1 can win with next point
+        return true;
+      }
+      if (player1Points === 'advantage') {
+        // Player 1 has advantage - Player 1 can win with next point
+        return true;
+      }
+    }
+  }
+  
+  return false;
+}
+
+// Check if a set point opportunity exists
+export function isSetPoint(gameScore: GameScore, setScore: SetScore, config: MatchConfig): boolean {
+  const { player1Points, player2Points } = gameScore;
+  const { player1Games, player2Games } = setScore;
+  const requiredGames = config.setDuration;
+  
+  // Check if either player is one game away from winning the set
+  const player1CanWinSet = player1Games === requiredGames - 1 && player2Games < requiredGames - 1;
+  const player2CanWinSet = player2Games === requiredGames - 1 && player1Games < requiredGames - 1;
+  
+  if (!player1CanWinSet && !player2CanWinSet) {
+    return false;
+  }
+  
+  // Now check if the player who can win the set is one point away from winning the current game
+  if (player1CanWinSet) {
+    // Player 1 can win the set with this game, check if they're one point away from winning the game
+    if (config.scoringSystem === 'no-ad') {
+      if (player1Points === 40 && typeof player2Points === 'number' && player2Points <= 30) {
+        return true;
+      }
+      if (player1Points === 40 && player2Points === 40) {
+        return true;
+      }
+    } else {
+      if (player1Points === 40 && typeof player2Points === 'number' && player2Points <= 30) {
+        return true;
+      }
+      if (player1Points === 'advantage') {
+        return true;
+      }
+    }
+  } else if (player2CanWinSet) {
+    // Player 2 can win the set with this game, check if they're one point away from winning the game
+    if (config.scoringSystem === 'no-ad') {
+      if (player2Points === 40 && typeof player1Points === 'number' && player1Points <= 30) {
+        return true;
+      }
+      if (player2Points === 40 && player1Points === 40) {
+        return true;
+      }
+    } else {
+      if (player2Points === 40 && typeof player1Points === 'number' && player1Points <= 30) {
+        return true;
+      }
+      if (player2Points === 'advantage') {
+        return true;
+      }
+    }
+  }
+  
+  return false;
+}
+
+// Check if a match point opportunity exists
+export function isMatchPoint(gameScore: GameScore, setScore: SetScore, sets: SetScore[], config: MatchConfig): boolean {
+  const { player1Points, player2Points } = gameScore;
+  const { player1Games, player2Games } = setScore;
+  const requiredGames = config.setDuration;
+  
+  // Determine required sets based on match format
+  let requiredSets: number;
+  switch (config.matchFormat) {
+    case 'single':
+      requiredSets = 1;
+      break;
+    case 'best-of-3':
+      requiredSets = 2;
+      break;
+    case 'best-of-5':
+      requiredSets = 3;
+      break;
+    default:
+      requiredSets = 2; // Default to best-of-3
+  }
+  
+  // Count sets won by each player
+  let player1SetsWon = 0;
+  let player2SetsWon = 0;
+  
+  for (const set of sets) {
+    if (set.player1Games >= requiredGames) {
+      player1SetsWon++;
+    } else if (set.player2Games >= requiredGames) {
+      player2SetsWon++;
+    }
+  }
+  
+  // Check if either player is one set away from winning the match
+  const player1CanWinMatch = player1SetsWon === requiredSets - 1 && player2SetsWon < requiredSets - 1;
+  const player2CanWinMatch = player2SetsWon === requiredSets - 1 && player1SetsWon < requiredSets - 1;
+  
+  if (!player1CanWinMatch && !player2CanWinMatch) {
+    return false;
+  }
+  
+  // Now check if the player who can win the match is one game away from winning the current set
+  const player1CanWinSet = player1Games === requiredGames - 1 && player2Games < requiredGames - 1;
+  const player2CanWinSet = player2Games === requiredGames - 1 && player1Games < requiredGames - 1;
+  
+  if (!player1CanWinSet && !player2CanWinSet) {
+    return false;
+  }
+  
+  // Finally check if the player who can win the match and set is one point away from winning the current game
+  if (player1CanWinMatch && player1CanWinSet) {
+    // Player 1 can win the match with this set, and can win the set with this game, check if they're one point away from winning the game
+    if (config.scoringSystem === 'no-ad') {
+      if (player1Points === 40 && typeof player2Points === 'number' && player2Points <= 30) {
+        return true;
+      }
+      if (player1Points === 40 && player2Points === 40) {
+        return true;
+      }
+    } else {
+      if (player1Points === 40 && typeof player2Points === 'number' && player2Points <= 30) {
+        return true;
+      }
+      if (player1Points === 'advantage') {
+        return true;
+      }
+    }
+  } else if (player2CanWinMatch && player2CanWinSet) {
+    // Player 2 can win the match with this set, and can win the set with this game, check if they're one point away from winning the game
+    if (config.scoringSystem === 'no-ad') {
+      if (player2Points === 40 && typeof player1Points === 'number' && player1Points <= 30) {
+        return true;
+      }
+      if (player2Points === 40 && player1Points === 40) {
+        return true;
+      }
+    } else {
+      if (player2Points === 40 && typeof player1Points === 'number' && player1Points <= 30) {
+        return true;
+      }
+      if (player2Points === 'advantage') {
+        return true;
+      }
+    }
+  }
+  
+  return false;
+}
